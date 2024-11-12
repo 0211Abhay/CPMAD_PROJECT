@@ -3,9 +3,9 @@ import 'package:legal_log/screens/homeScreen.dart';
 import 'package:legal_log/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp().then((value){
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,).then((value){
     print('Firebase app initialized successfully');
   });
   runApp(MaterialApp(
