@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:legal_log/screens/homeScreen.dart';
+import 'package:legal_log/screens/splash_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    home: SplashScreen(),
+    routes: {
+      '/home': (context) => Homescreen(), // Define your home screen here
+    },
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -12,7 +18,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Legal Log',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -32,7 +39,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Homescreen(),
+      home: SplashScreen(),
     );
   }
 }
