@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "661450372701",
+    "project_id": "legal-log",
+    "storage_bucket": "legal-log.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661450372701:android:fa58888bec3eaa4b6a3fb4",
+        "android_client_info": {
+          "package_name": "com.example.legal_log"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ27SuFi-WYfUdzxL_rPXeBKbtrewd1tA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
