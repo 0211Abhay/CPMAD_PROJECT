@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:legal_log/screens/homeScreen.dart';
-import 'package:legal_log/screens/splash_screen.dart';
+import 'package:legal_log/features/authentication/screens/homeScreen.dart';
+import 'package:legal_log/features/authentication/screens/login_screen.dart';
+import 'package:legal_log/features/authentication/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),  // This will display the splash screen first
       routes: {
         '/home': (context) => Homescreen(), // Define home route for easier navigation
-        '/login': (context) => Login()
+        '/login': (context) => LoginScreen(),
+        
       },
     );
   }
