@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(
-          context, '/home'); // Navigate to home screen
+          context, '/login'); // Navigate to home screen
     });
   }
 
@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset('assets/images/logo.jpg'), // Display splash image
+        child: Image.asset('assets/images/logo-removebg-preview.png'), // Display splash image
       ),
     );
   }
