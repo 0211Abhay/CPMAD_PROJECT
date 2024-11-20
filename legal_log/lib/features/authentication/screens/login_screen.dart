@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:legal_log/common_widgets/custom_text_fields.dart';
+import 'package:legal_log/features/authentication/controller/login_controller.dart';
 import 'package:lottie/lottie.dart';
 
 class LoginScreen extends StatelessWidget {
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>(); // Form key
+  final LoginController loginController = Get.put(LoginController()); // Controller
 
   LoginScreen({super.key});
 
@@ -18,134 +21,115 @@ class LoginScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.05, // Adjust padding relative to screen width
-            vertical: screenHeight * 0.02, // Adjust vertical padding
+            horizontal: screenWidth * 0.05,
+            vertical: screenHeight * 0.02,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo
-              Lottie.asset(
-                "assets/lottie/hammer.json",
-                width: 200, // Adjust the width
-                height: 200, // Adjust the height
-                fit: BoxFit.contain, // Ensure it fits within its bounds
-              ),
+          child: Form( // Form widget to handle validation
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo
+                Lottie.asset(
+                  "assets/lottie/hammer.json",
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: screenHeight * 0.02),
 
-              SizedBox(height: screenHeight * 0.02), // Responsive spacing
+                const Text(
+                  'Legal Log',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: screenHeight * 0.02),
 
-              const Text(
-                'Legal Log',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+                const Text(
+                  'Login',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: screenHeight * 0.01),
 
-              SizedBox(height: screenHeight * 0.02),
+                const Text('Enter your username and password to login'),
+                SizedBox(height: screenHeight * 0.02),
 
-              const Text(
-                'Login',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+                // Email Field
+                CustomTextField(
+                  label: 'Email',
+                  controller: emailController,
+                  validator: loginController.validateEmail,
+                  prefixIcon: const Icon(Icons.email_outlined),
+                ),
+                SizedBox(height: screenHeight * 0.02),
 
-              SizedBox(height: screenHeight * 0.01),
+                // Password Field with Obx
+                Obx(() => CustomTextField(
+                      label: 'Password',
+                      controller: passwordController,
+                      obscureText: loginController.obscurePassword.value,
+                      validator: loginController.validatePassword,
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        icon: Icon(loginController.obscurePassword.value
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        onPressed: loginController.togglePasswordVisibility,
+                      ),
+                    )),
 
-              const Text('Enter your username and password to login'),
+                SizedBox(height: screenHeight * 0.02),
 
-              SizedBox(height: screenHeight * 0.02),
+                ElevatedButton(
+                  onPressed: () {
+                    // Validate the form fields
+                    if (formKey.currentState!.validate()) {
+                      // Navigate to dashboard if valid
+                      Get.toNamed('/dashboard');
+                    }
+                  },
+                  child: const Text('Login'),
+                ),
 
-              // Username Field
-              CustomTextField(
-                label: 'Username',
-                controller: usernameController,
-              ),
+                SizedBox(height: screenHeight * 0.02),
+                const Text('Or login with'),
+                SizedBox(height: screenHeight * 0.01),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Forgot Username?'),
-                  TextButton(
-                    onPressed: () {
-                      // Implement forgot username functionality
-                    },
-                    child: const Text('Reset'),
-                  ),
-                ],
-              ),
+                // Social Login Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Implement Google login
+                      },
+                      icon: const Icon(Icons.g_mobiledata),
+                      label: const Text('Google'),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Implement Facebook login
+                      },
+                      icon: const Icon(Icons.facebook),
+                      label: const Text('Facebook'),
+                    ),
+                  ],
+                ),
 
-              SizedBox(height: screenHeight * 0.01),
-
-              // Password Field
-              CustomTextField(
-                label: 'Password',
-                controller: passwordController,
-                obscureText: true,
-              ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Forgot Password?'),
-                  TextButton(
-                    onPressed: () {
-                      // Implement forgot password functionality
-                    },
-                    child: const Text('Reset'),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: screenHeight * 0.02),
-
-              // Login Button
-              ElevatedButton(
-                onPressed: () {
-                  // Implement login logic using GetX
-                  Get.toNamed('/dashboard'); // Navigate to dashboard on successful login
-                },
-                child: const Text('Login'),
-              ),
-
-              SizedBox(height: screenHeight * 0.02),
-
-              const Text('Or login with'),
-
-              SizedBox(height: screenHeight * 0.01),
-
-              // Social Login Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Implement Google login
-                    },
-                    icon: const Icon(Icons.g_mobiledata),
-                    label: const Text('Google'),
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Implement Facebook login
-                    },
-                    icon: const Icon(Icons.facebook),
-                    label: const Text('Facebook'),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: screenHeight * 0.02),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account?"),
-                  TextButton(
-                    onPressed: () {
-                      Get.toNamed('/register'); // Navigate to registration screen
-                    },
-                    child: const Text('Register'),
-                  ),
-                ],
-              )
-            ],
+                SizedBox(height: screenHeight * 0.02),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account?"),
+                    TextButton(
+                      onPressed: () {
+                        Get.toNamed('/register'); // Navigate to registration
+                      },
+                      child: const Text('Register'),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
