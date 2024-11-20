@@ -154,7 +154,7 @@ Row(
                           'Proceeding to the next screen...',
                           snackPosition: SnackPosition.BOTTOM,
                         );
-                      Get.toNamed('/register'); // Navigate to registration screen
+                      Get.toNamed('/client_add'); // Navigate to registration screen
                       
                       } else {
                         Get.snackbar(
