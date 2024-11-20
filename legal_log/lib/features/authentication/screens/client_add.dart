@@ -100,7 +100,7 @@ class ClientRegistrationScreen extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Add Clinet',
+                      'Add Client',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
