@@ -5,87 +5,122 @@ import 'package:legal_log/common_widgets/custom_text_fields.dart';
 import 'package:legal_log/features/authentication/controller/registration_controller.dart';
 import 'package:lottie/lottie.dart';
 
-
 class RegistrationScreen extends StatelessWidget {
   final RegistrationController controller = Get.put(RegistrationController());
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Calculate dynamic spacings
+    double horizontalPadding = screenWidth * 0.05; // 5% of screen width
+    double verticalSpacing = screenHeight * 0.02; // 2% of screen height
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Center(
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Logo and Title
+                // Logo
                 Lottie.asset(
                   "assets/lottie/hammer.json",
-                  width: 200, // Adjust the width
-                  height: 200, // Adjust the height
-                  fit: BoxFit.contain, // Ensure it fits within its bounds
+                  width: screenWidth * 0.5, // 50% of screen width
+                  height: screenHeight * 0.25, // 25% of screen height
+                  fit: BoxFit.contain,
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: verticalSpacing),
+
+                // Title
                 Text(
                   'Legal Log',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 24,
+                    fontSize: screenWidth * 0.06, // Dynamic font size
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: verticalSpacing),
+
                 Text(
                   'Register',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: screenWidth * 0.05,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: verticalSpacing * 0.5),
+
                 Text(
                   'Enter your details to register',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: screenWidth * 0.04,
+                  ),
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: verticalSpacing * 1.5),
 
                 // Form Fields
                 CustomTextField(label: 'Name'),
-                const SizedBox(height: 10),
+                SizedBox(height: verticalSpacing),
+
                 CustomTextField(label: 'Email Address'),
-                const SizedBox(height: 10),
+                SizedBox(height: verticalSpacing),
 
                 // Country Picker with Mobile Number
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: CountryCodePicker(
-                        onChanged: (CountryCode code) {
-                          controller.updateCountryCode(code);
-                        },
-                        initialSelection: 'IN', // Default to India
-                        favorite: ['+91', 'IN'], // Show India as a favorite
-                        showFlag: true,
-                        showFlagDialog: true,
-                        showCountryOnly: false,
-                        showOnlyCountryWhenClosed: false,
-                        alignLeft: false,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      flex: 5,
-                      child: CustomTextField(label: 'Mobile Number'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
+                // Country Picker with Mobile Number
+Row(
+  children: [
+    Expanded(
+      flex: 2,
+      child: Container(
+        height: 50, // Match height with CustomTextField
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.grey,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: CountryCodePicker(
+          onChanged: (CountryCode code) {
+            controller.updateCountryCode(code);
+          },
+          initialSelection: 'IN',
+          favorite: ['+91', 'IN'],
+          showFlag: true,
+          showFlagDialog: true,
+          showCountryOnly: false,
+          showOnlyCountryWhenClosed: true,
+          alignLeft: false,
+          padding: EdgeInsets.zero, // Remove default padding
+          textStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+          ),
+          boxDecoration: BoxDecoration(
+            color: Colors.transparent,
+          ),
+        ),
+      ),
+    ),
+    SizedBox(width: screenWidth * 0.02),
+    Expanded(
+      flex: 5,
+      child: CustomTextField(label: 'Mobile Number'),
+    ),
+  ],
+),
+                SizedBox(height: verticalSpacing),
+
                 CustomTextField(label: 'Password', obscureText: true),
-                const SizedBox(height: 10),
+                SizedBox(height: verticalSpacing),
+
                 CustomTextField(label: 'Confirm Password', obscureText: true),
-                const SizedBox(height: 20),
+                SizedBox(height: verticalSpacing * 1.5),
 
                 // Terms and Conditions Checkbox
                 Row(
@@ -101,12 +136,12 @@ class RegistrationScreen extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'I agree with the terms and conditions',
-                        style: TextStyle(fontSize: 14),
+                        style: TextStyle(fontSize: screenWidth * 0.035),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: verticalSpacing * 1.5),
 
                 // Next Button
                 SizedBox(
@@ -131,7 +166,9 @@ class RegistrationScreen extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: EdgeInsets.symmetric(
+                        vertical: verticalSpacing * 0.8, // Adjust vertical padding
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -139,11 +176,32 @@ class RegistrationScreen extends StatelessWidget {
                     child: Text(
                       'Next',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: screenWidth * 0.045, // Dynamic font size
                         color: Colors.white,
                       ),
                     ),
                   ),
+                ),
+                SizedBox(height: verticalSpacing),
+
+                // Already Have an Account Section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account?",
+                      style: TextStyle(fontSize: screenWidth * 0.04),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Get.toNamed('/login'); // Navigate to login screen
+                      },
+                      child: Text(
+                        'Login',
+                        style: TextStyle(fontSize: screenWidth * 0.04),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
