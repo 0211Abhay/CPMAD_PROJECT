@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:legal_log/common_widgets/custom_text_fields.dart';
 import 'package:lottie/lottie.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -52,9 +53,9 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.02),
 
               // Username Field
-              TextField(
+              CustomTextField(
+                label: 'Username',
                 controller: usernameController,
-                decoration: const InputDecoration(labelText: 'Username'),
               ),
 
               Row(
@@ -73,10 +74,10 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.01),
 
               // Password Field
-              TextField(
+              CustomTextField(
+                label: 'Password',
                 controller: passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password'),
               ),
 
               Row(
