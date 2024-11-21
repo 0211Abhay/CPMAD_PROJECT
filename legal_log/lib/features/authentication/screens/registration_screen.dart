@@ -166,6 +166,7 @@ class RegistrationScreen extends StatelessWidget {
                               'Success',
                               'Proceeding to the next screen...',
                             );
+                            Get.toNamed('/add_profilepage');
                           } else {
                             Get.snackbar(
                               'Error',
