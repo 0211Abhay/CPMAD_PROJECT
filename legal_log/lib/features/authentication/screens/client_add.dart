@@ -82,6 +82,9 @@ class ClientRegistrationScreen extends StatelessWidget {
                           'Client Added Sucessfully',
                           snackPosition: SnackPosition.BOTTOM,
                         );
+
+                        Get.toNamed('/case_add'); 
+
                       } else {
                         Get.snackbar(
                           'Error',
