@@ -176,7 +176,7 @@ class RegistrationScreen extends StatelessWidget {
                           }
                         }
                       },
-                      child: Text('Register'),
+                      child: Text('Next'),
                     ),
                   ),
                   SizedBox(height: verticalSpacing),
