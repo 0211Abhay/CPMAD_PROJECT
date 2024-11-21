@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:legal_log/features/authentication/screens/add_profilepicture.dart';
 import 'package:legal_log/features/authentication/screens/case_add.dart';
 import 'package:legal_log/features/authentication/screens/client_add.dart';
 import 'package:legal_log/features/authentication/screens/homeScreen.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegistrationScreen(),
         '/client_add': (context) => ClientRegistrationScreen(),
         '/case_add': (context) => CaseRegistrationScreen(),
-        //CaseRegistrationScreen
+        '/add_profilepage': (context) => AddProfilepicture()
       },
     );
   }
