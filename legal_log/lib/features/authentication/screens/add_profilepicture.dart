@@ -40,14 +40,14 @@ class AddProfilepicture extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Get.toNamed('home_page');
+                    Get.toNamed('/home_page');
                   },
                   child: Text('Upload'),
                 ),
                 SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
-                    Get.toNamed('home_page');
+                    Get.toNamed('/home_page');
                   },
                   child: Text('Skip'),
                 ),

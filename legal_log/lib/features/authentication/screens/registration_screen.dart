@@ -161,21 +161,8 @@ class RegistrationScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          if (controller.agreeToTerms.value) {
-                            Get.snackbar(
-                              'Success',
-                              'Proceeding to the next screen...',
-                            );
-                            Get.toNamed('/add_profilepage');
-                          } else {
-                            Get.snackbar(
-                              'Error',
-                              'Please agree to the terms and conditions.',
-                              backgroundColor: Colors.red,
-                              colorText: Colors.white,
-                            );
+                            controller.registerUser();
                           }
-                        }
                       },
                       child: Text('Next'),
                     ),
