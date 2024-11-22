@@ -1,9 +1,17 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:legal_log/features/authentication/model/register_model.dart';
+
 
 class RegistrationController extends GetxController {
-  // TextEditingControllers for fields
+  // Firebase Instances
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Form controllers
   var nameController = TextEditingController();
   var emailController = TextEditingController();
   var mobileController = TextEditingController();
@@ -11,32 +19,32 @@ class RegistrationController extends GetxController {
   var confirmPasswordController = TextEditingController();
 
   // Observables for state management
-  var obscurePassword = true.obs; // For password field
-  var obscureConfirmPassword = true.obs; // For confirm password field
-  var agreeToTerms = false.obs; // For terms and conditions checkbox
-  var selectedCountryCode = '+91'.obs; // Default to India
+  var selectedCountryCode = '+91'.obs; // Default country code
+  var obscurePassword = true.obs;
+  var obscureConfirmPassword = true.obs;
+  var agreeToTerms = false.obs;
 
-  // Toggles password visibility
-  void togglePasswordVisibility() {
-    obscurePassword.value = !obscurePassword.value;
-  }
-
-  // Toggles confirm password visibility
-  void toggleConfirmPasswordVisibility() {
-    obscureConfirmPassword.value = !obscureConfirmPassword.value;
-  }
-
-  // Toggles terms and conditions checkbox
-  void toggleAgreeToTerms() {
-    agreeToTerms.value = !agreeToTerms.value;
-  }
-
-  // Updates country code
+  // Update the selected country code
   void updateCountryCode(CountryCode code) {
     selectedCountryCode.value = code.dialCode!;
   }
 
-  // Validation methods
+  // Toggle password visibility
+  void togglePasswordVisibility() {
+    obscurePassword.value = !obscurePassword.value;
+  }
+
+  // Toggle confirm password visibility
+  void toggleConfirmPasswordVisibility() {
+    obscureConfirmPassword.value = !obscureConfirmPassword.value;
+  }
+
+  // Toggle terms and conditions checkbox
+  void toggleAgreeToTerms() {
+    agreeToTerms.value = !agreeToTerms.value;
+  }
+
+  // Form validation
   String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Name is required';
@@ -76,5 +84,63 @@ class RegistrationController extends GetxController {
       return 'Passwords do not match';
     }
     return null;
+  }
+
+  // Register user
+  Future<void> registerUser() async {
+    if (!agreeToTerms.value) {
+      Get.snackbar(
+        'Error',
+        'Please agree to the terms and conditions.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    try {
+      // Concatenate country code with the mobile number
+      String fullPhoneNumber =
+          '${selectedCountryCode.value}${mobileController.text.trim()}';
+
+      // Register user in Firebase Auth
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Prepare advocate data
+      Advocate advocate = Advocate(
+        advocateId: userCredential.user!.uid,
+        emailAddress: emailController.text.trim(),
+        name: nameController.text.trim(),
+        password: passwordController.text.trim(),
+        phoneNo: fullPhoneNumber,
+      );
+
+      // Store advocate details in Firestore
+      await _firestore.collection('advocate').doc(userCredential.user!.uid).set({
+        'advocate_id': advocate.advocateId,
+        'email_address': advocate.emailAddress,
+        'name': advocate.name,
+        'password': advocate.password, // Hash this in production!
+        'phone_no': advocate.phoneNo,
+      });
+
+      Get.snackbar(
+        'Success',
+        'Registration completed successfully!',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      Get.toNamed('/add_profilepage');
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
 }

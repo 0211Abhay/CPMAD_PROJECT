@@ -38,7 +38,8 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegistrationScreen(),
         '/client_add': (context) => ClientRegistrationScreen(),
         '/case_add': (context) => CaseRegistrationScreen(),
-        '/add_profilepage': (context) => AddProfilepicture()
+        '/add_profilepage': (context) => AddProfilepicture(),
+        '/home_page': (context) => Homescreen(),
       },
     );
   }
