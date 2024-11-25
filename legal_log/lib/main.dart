@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:legal_log/features/authentication/controller/login_controller.dart';
 import 'package:legal_log/features/authentication/screens/add_profilepicture.dart';
 import 'package:legal_log/features/authentication/screens/case_add.dart';
 import 'package:legal_log/features/authentication/screens/client_add.dart';
@@ -17,6 +18,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((value) {
   });
   await GetStorage.init(); 
+  Get.put(LoginController());
   runApp(MyApp());
 }
 

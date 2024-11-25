@@ -8,7 +8,7 @@ class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GetStorage _storage = GetStorage();
-
+  
   // Toggle password visibility
   void togglePasswordVisibility() {
     obscurePassword.value = !obscurePassword.value;
