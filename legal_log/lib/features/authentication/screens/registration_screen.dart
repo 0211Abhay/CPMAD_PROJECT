@@ -29,28 +29,13 @@ class RegistrationScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Logo and Title
-                  Lottie.asset(
-                    "assets/lottie/hammer.json",
+                  Image.asset(
+                    'assets/images/logo-removebg-preview.png',
                     width: screenWidth * 0.5,
                     height: screenHeight * 0.25,
+                    fit: BoxFit.contain,
                   ),
                   SizedBox(height: verticalSpacing),
-                  Text(
-                    'Legal Log',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenWidth * 0.06,
-                    ),
-                  ),
-                  SizedBox(height: verticalSpacing),
-                  Text(
-                    'Register',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenWidth * 0.05,
-                    ),
-                  ),
-                  SizedBox(height: verticalSpacing * 1.5),
 
                   // Name Field
                   CustomTextField(
@@ -155,16 +140,17 @@ class RegistrationScreen extends StatelessWidget {
                   ),
                   SizedBox(height: verticalSpacing * 1.5),
 
-                  // Next Button
+                  // Send OTP Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                            controller.registerUser();
-                          }
+                          controller.sendVerificationEmail(controller.emailController.text.trim());
+                          Get.toNamed('/verify_otp');
+                        }
                       },
-                      child: Text('Next'),
+                      child: Text('Send OTP'),
                     ),
                   ),
                   SizedBox(height: verticalSpacing),

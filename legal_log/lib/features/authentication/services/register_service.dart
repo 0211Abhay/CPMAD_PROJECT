@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:legal_log/features/authentication/model/register_model.dart';
+import 'package:legal_log/features/authentication/model/advocate_model.dart';
 
 class RegistrationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;

@@ -1,10 +1,12 @@
+import 'dart:math';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:legal_log/features/authentication/model/register_model.dart';
-
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
+import 'package:legal_log/features/authentication/model/advocate_model.dart';
 
 class RegistrationController extends GetxController {
   // Firebase Instances
@@ -23,6 +25,7 @@ class RegistrationController extends GetxController {
   var obscurePassword = true.obs;
   var obscureConfirmPassword = true.obs;
   var agreeToTerms = false.obs;
+  var generatedOtp = 0.obs;
 
   // Update the selected country code
   void updateCountryCode(CountryCode code) {
@@ -86,7 +89,45 @@ class RegistrationController extends GetxController {
     return null;
   }
 
-  // Register user
+  // Send OTP to email
+  Future<void> sendVerificationEmail(String recipientEmail) async {
+    final String senderEmail = 'aryan.langhanoja119561@marwadiuniversity.ac.in';
+    final String senderPassword = 'dvvm xula uqrn nolx'; // Your email password
+    generatedOtp.value = Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
+
+    final smtpServer = gmail(senderEmail, senderPassword);
+
+    final message = Message()
+      ..from = Address(senderEmail, 'Legal Log')
+      ..recipients.add(recipientEmail)
+      ..subject = 'Email Verification'
+      ..text = 'Your verification code is ${generatedOtp.value}';
+
+    try {
+      final sendReport = await send(message, smtpServer);
+      print('Message sent: ' + sendReport.toString());
+    } catch (e) {
+      print('Message not sent. Error: $e');
+    }
+  }
+
+  // Verify OTP
+  void verifyOtp(int userInputOtp) {
+    if (userInputOtp == generatedOtp.value) {
+      print("OTP verified successfully!");
+      // Proceed to register the user in Firestore
+      registerUser();
+    } else {
+      Get.snackbar(
+        'Error',
+        'Invalid OTP. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // Register user after OTP verification
   Future<void> registerUser() async {
     if (!agreeToTerms.value) {
       Get.snackbar(
@@ -100,8 +141,7 @@ class RegistrationController extends GetxController {
 
     try {
       // Concatenate country code with the mobile number
-      String fullPhoneNumber =
-          '${selectedCountryCode.value}${mobileController.text.trim()}';
+      String fullPhoneNumber = '${selectedCountryCode.value}${mobileController.text.trim()}';
 
       // Register user in Firebase Auth
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -133,7 +173,7 @@ class RegistrationController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-      Get.toNamed('/add_profilepage');
+      Get.toNamed('/home_page');
     } catch (e) {
       Get.snackbar(
         'Error',

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/features/authentication/screens/add_profilepicture.dart';
 import 'package:legal_log/features/authentication/screens/case_add.dart';
 import 'package:legal_log/features/authentication/screens/client_add.dart';
 import 'package:legal_log/features/authentication/screens/homeScreen.dart';
 import 'package:legal_log/features/authentication/screens/login_screen.dart';
+import 'package:legal_log/features/authentication/screens/otp_screen.dart';
 import 'package:legal_log/features/authentication/screens/registration_screen.dart';
 import 'package:legal_log/features/authentication/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,7 +16,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((value) {
   });
-
+  await GetStorage.init(); 
   runApp(MyApp());
 }
 
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
         '/case_add': (context) => CaseRegistrationScreen(),
         '/add_profilepage': (context) => AddProfilepicture(),
         '/home_page': (context) => Homescreen(),
+        "/verify_otp": (context) => OtpVerificationScreen(),
+        
       },
     );
   }
