@@ -146,14 +146,18 @@ class RegistrationScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          if (controller.agreeToTermss()) {
-                             Get.toNamed('/verify_otp');
-                          } else {
+                          if (controller.agreetoTermss()) {
                             controller.sendVerificationEmail(
                                 controller.emailController.text.trim());
+                            Get.toNamed('/verify_otp');
+                          } else {
+                            Get.snackbar(
+                              'Error',
+                              'Please agree to the terms and conditions.',
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
                           }
-
-                         
                         }
                       },
                       child: Text('Send OTP'),

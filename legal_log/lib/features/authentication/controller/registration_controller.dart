@@ -33,7 +33,7 @@ class RegistrationController extends GetxController {
     selectedCountryCode.value = code.dialCode!;
   }
 
-  bool agreeToTermss(){
+  bool agreetoTermss(){
     if (!agreeToTerms.value) {
       Get.snackbar(
         'Error',
@@ -42,10 +42,10 @@ class RegistrationController extends GetxController {
         colorText: Colors.white,
       );
       return false;
-    }
-    else{
+    }else{
       return true;
     }
+
   }
   // Toggle password visibility
   void togglePasswordVisibility() {
@@ -107,8 +107,9 @@ class RegistrationController extends GetxController {
   // Send OTP to email
   Future<void> sendVerificationEmail(String recipientEmail) async {
     final String senderEmail = 'aryan.langhanoja119561@marwadiuniversity.ac.in';
-    final String senderPassword = 'czjo qktt owwt kwgv'; // Your email password
+    final String senderPassword = 'dvvm xula uqrn nolx'; // Your email password
     generatedOtp.value = Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
+    print('Generated OTP: ${generatedOtp.value}');
 
     final smtpServer = gmail(senderEmail, senderPassword);
 
@@ -145,7 +146,16 @@ class RegistrationController extends GetxController {
   // Register user after OTP verification
     // Register user after OTP verification
   Future<void> registerUser() async {
-    
+    if (!agreeToTerms.value) {
+      Get.snackbar(
+        'Error',
+        'Please agree to the terms and conditions.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
     try {
       // Concatenate country code with the mobile number
       String fullPhoneNumber = '${selectedCountryCode.value}${mobileController.text.trim()}';
