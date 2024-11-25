@@ -146,8 +146,14 @@ class RegistrationScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          controller.sendVerificationEmail(controller.emailController.text.trim());
-                          Get.toNamed('/verify_otp');
+                          if (controller.agreeToTermss()) {
+                             Get.toNamed('/verify_otp');
+                          } else {
+                            controller.sendVerificationEmail(
+                                controller.emailController.text.trim());
+                          }
+
+                         
                         }
                       },
                       child: Text('Send OTP'),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:legal_log/features/authentication/model/advocate_model.dart';
@@ -32,6 +33,20 @@ class RegistrationController extends GetxController {
     selectedCountryCode.value = code.dialCode!;
   }
 
+  bool agreeToTermss(){
+    if (!agreeToTerms.value) {
+      Get.snackbar(
+        'Error',
+        'Please agree to the terms and conditions.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
   // Toggle password visibility
   void togglePasswordVisibility() {
     obscurePassword.value = !obscurePassword.value;
@@ -128,17 +143,9 @@ class RegistrationController extends GetxController {
   }
 
   // Register user after OTP verification
+    // Register user after OTP verification
   Future<void> registerUser() async {
-    if (!agreeToTerms.value) {
-      Get.snackbar(
-        'Error',
-        'Please agree to the terms and conditions.',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-
+    
     try {
       // Concatenate country code with the mobile number
       String fullPhoneNumber = '${selectedCountryCode.value}${mobileController.text.trim()}';
@@ -167,12 +174,24 @@ class RegistrationController extends GetxController {
         'phone_no': advocate.phoneNo,
       });
 
+      // Save the user data in GetStorage
+      final GetStorage storage = GetStorage();
+      storage.write('user', {
+        'advocate_id': advocate.advocateId,
+        'email_address': advocate.emailAddress,
+        'name': advocate.name,
+        'phone_no': advocate.phoneNo,
+      });
+
+      // Show success message
       Get.snackbar(
         'Success',
         'Registration completed successfully!',
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
+
+      // Navigate to the home page
       Get.toNamed('/home_page');
     } catch (e) {
       Get.snackbar(
@@ -183,4 +202,5 @@ class RegistrationController extends GetxController {
       );
     }
   }
+
 }
