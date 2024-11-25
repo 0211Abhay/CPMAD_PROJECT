@@ -1,16 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:legal_log/features/authentication/screens/case_add.dart';
-import 'package:legal_log/features/authentication/screens/client_add.dart';
 import 'package:legal_log/features/authentication/screens/homeScreen.dart';
 import 'package:legal_log/features/authentication/screens/login_screen.dart';
 import 'package:legal_log/features/authentication/screens/registration_screen.dart';
-import 'package:legal_log/features/authentication/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:legal_log/features/case_add/screen/case_add.dart';
+import 'package:legal_log/features/client_add/screen/client_add.dart';
+import 'package:legal_log/splash_screen.dart';
 import 'firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
+  
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((value) {
   });
 
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),  // This will display the splash screen first
       routes: {
-        '/home': (context) => Homescreen(), // Define home route for easier navigation
+        '/home': (context) => HomeScreen(), // Define home route for easier navigation
         '/login': (context) => LoginScreen(), 
         '/register': (context) => RegistrationScreen(),
         '/client_add': (context) => ClientRegistrationScreen(),

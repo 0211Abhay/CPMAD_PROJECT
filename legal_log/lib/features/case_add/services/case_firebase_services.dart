@@ -4,15 +4,15 @@ import 'package:legal_log/features/case_add/model/case.dart'; // Adjust import p
 class CaseFirebaseServices {
   var db = FirebaseFirestore.instance;
 
-  // Create - Add a new legal case 
+  // Create - Add a new legal case
   addCase(Case legalCase) {
-    final legalCaseData =
-        legalCase.toJson();
+    final legalCaseData = legalCase.toJson();
 
-    // Add a new document with a generated ID
-    db.collection("case").add(legalCaseData).then((DocumentReference doc) =>
-        // ignore: avoid_print
-        print("Legal case added with ID: ${doc.id}"));
+    db.collection("case").add(legalCaseData).then((DocumentReference doc) {
+      print("Legal case added with ID: ${doc.id}");
+    }).catchError((error) {
+      print("Failed to add legal case: $error");
+    });
   }
 
   // Read - Fetch all legal cases

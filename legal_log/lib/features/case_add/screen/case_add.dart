@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:legal_log/common_widgets/custom_text_fields.dart';
-import 'package:legal_log/features/authentication/controller/registration_controller.dart';
+import 'package:legal_log/features/case_add/controller/case_add_controller.dart';
 
 class CaseRegistrationScreen extends StatelessWidget {
-  final RegistrationController controller = Get.put(RegistrationController());
+  final CaseAddController controller = Get.put(CaseAddController());
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   CaseRegistrationScreen({super.key});
 
@@ -17,116 +17,181 @@ class CaseRegistrationScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 30),
-                Text(
-                  'Register A Case',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+            child: Form(
+              key: controller.formKey, // Attach the form key
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 30),
+                  Text(
+                    'Register A Case',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Enter case details to register',
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 30),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Enter case details to register',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 30),
 
-                // Form Fields
-                CustomTextField(label: 'File No'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Case No.'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Applicant Name.'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Opponent Name.'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Our Client Name.'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Date of Filing'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Stage'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Previous Date'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Area'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Court'),
-                const SizedBox(height: 10),
-                CustomTextField(label: 'Case Note'),
-                const SizedBox(height: 10),
+                  // Form Fields
+                  CustomTextField(
+                    label: 'File No',
+                    controller: controller.fileNoController,
+                    prefixIcon: Icon(Icons.file_copy),
+                    validator: controller.validateFileNo,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Case No.',
+                    controller: controller.caseNoController,
+                    prefixIcon: Icon(Icons.confirmation_number),
+                    validator: controller.validateCaseNo,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Applicant Name',
+                    controller: controller.applicantNameController,
+                    prefixIcon: Icon(Icons.person),
+                    validator: controller.validateApplicantName,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Other Applicant',
+                    controller: controller.otherapplicantNameController,
+                    prefixIcon: Icon(Icons.group),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Opponent Name',
+                    controller: controller.opponentNameController,
+                    prefixIcon: Icon(Icons.person_off),
+                    validator: controller.validateOpponentName,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Other Opponent',
+                    controller: controller.otheropponentNameController,
+                    prefixIcon: Icon(Icons.group_off),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Our Client Name',
+                    controller: controller.ourClientController,
+                    prefixIcon: Icon(Icons.supervised_user_circle),
+                    validator: controller.validateOurClient,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Area',
+                    controller: controller.areaController,
+                    prefixIcon: Icon(Icons.location_city),
+                    validator: controller.validateArea,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Court',
+                    controller: controller.courtController,
+                    prefixIcon: Icon(Icons.account_balance),
+                    validator: controller.validateCourt,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Judge',
+                    controller: controller.judgeController,
+                    prefixIcon: Icon(Icons.gavel),
+                    validator: controller.validateJudge,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Our Advocates',
+                    controller: controller.ourAdvocatesController,
+                    prefixIcon: Icon(Icons.group_work),
+                    validator: controller.validateOurAdvocates,
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Opponent Advocates',
+                    controller: controller.opponentAdvocatesController,
+                    prefixIcon: Icon(Icons.group_off),
+                  ),
+                  const SizedBox(height: 10),
 
-
-
-                // Country Picker with Mobile Number
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: CountryCodePicker(
-                        onChanged: (CountryCode code) {
-                          controller.updateCountryCode(code);
+                  // Date of Filing Field
+                  Obx(() {
+                    return CustomTextField(
+                      label: 'Date of Filing',
+                      controller: TextEditingController(
+                          text: controller.dateOfFiling.value.isNotEmpty
+                              ? controller.dateOfFiling.value
+                              : ''),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          if (pickedDate != null) {
+                            controller.dateOfFiling.value =
+                                '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+                          }
                         },
-                        initialSelection: 'IN', // Default to India
-                        favorite: ['+91', 'IN'], // Show India as a favorite
-                        showFlag: true,
-                        showFlagDialog: true,
-                        showCountryOnly: false,
-                        showOnlyCountryWhenClosed: false,
-                        alignLeft: false,
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      flex: 5,
-                      child: CustomTextField(label: 'Mobile Number'),
-                    ),
-                  ],
-                ),
+                      validator: controller.validateDateOfFiling,
+                    );
+                  }),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Stage',
+                    controller: controller.stageController,
+                    validator: controller.validateStage,
+                    prefixIcon: Icon(Icons.timeline),
+                  ),
+                  const SizedBox(height: 10),
+                  CustomTextField(
+                    label: 'Case Note',
+                    controller: controller.noteController,
+                    validator: controller.validateNote,
+                    prefixIcon: Icon(Icons.note_add),
+                  ),
+                  const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
-
-                // Next Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (controller.agreeToTerms.value) {
-                        Get.snackbar(
-                          'Success',
-                          'Client Added Sucessfully',
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
-                      } else {
-                        Get.snackbar(
-                          'Error',
-                          'Please Enter Every Details',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  // Submit Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Check if the form is valid
+                        if (controller.formKey.currentState?.validate() ??
+                            false) {
+                          // If valid, submit the case
+                          controller.registerCase();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Add Client',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
+                      child: Text(
+                        'Add Case',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

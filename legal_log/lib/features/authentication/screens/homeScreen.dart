@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:legal_log/common_widgets/drawer.dart';
 
-class Homescreen extends StatefulWidget {
-  const Homescreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<Homescreen> createState() => _HomescreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomescreenState extends State<Homescreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("This is a Home Screen"),
+      appBar: AppBar(
+        title: const Text('Legal Log'),
+      ),
+      drawer: const CustomDrawer(), // Use the new CustomDrawer widget here
+      body: Center(
+        child: const Text('This is A Home Screen.'),
+      ),
     );
   }
 }

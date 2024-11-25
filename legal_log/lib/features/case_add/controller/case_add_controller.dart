@@ -1,166 +1,267 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:legal_log/features/case_add/model/case.dart';
-import 'package:legal_log/features/case_add/services/case_firebase_services.dart'; // Import your Firebase service file
+import 'package:legal_log/features/case_add/services/case_firebase_services.dart';
 
 /// Controller for managing case registration logic and form validation.
-class RegistrationController extends GetxController {
+class CaseAddController extends GetxController {
+  final formKey = GlobalKey<FormState>();
   // Observable variables for the form fields
   final fileNo = ''.obs;
   final caseNo = ''.obs;
   final applicantName = ''.obs;
+  final otherApplicant = <String>[].obs; // List for other applicants
   final opponentName = ''.obs;
-  final clientName = ''.obs;
-  final dateOfFiling = ''.obs;
-  final stage = ''.obs;
-  final previousDate = ''.obs;
+  final otherOpponent = <String>[].obs; // List for other opponents
+  final ourClient = ''.obs;
   final area = ''.obs;
   final court = ''.obs;
-  final caseNote = ''.obs;
-  final mobileNumber = ''.obs;
+  final judge = ''.obs;
+  final ourAdvocates = <String>[].obs; // List for our advocates
+  final opponentAdvocates = <String>[].obs; // List for opponent advocates
+  final dateOfFiling = ''.obs;
+  final stage = ''.obs;
+  final note = ''.obs;
 
-  // ----------------------------- Validation Methods -----------------------------
+  // TextEditingControllers for each field
+  late final TextEditingController fileNoController;
+  late final TextEditingController caseNoController;
+  late final TextEditingController applicantNameController;
+  late final TextEditingController otherapplicantNameController;
+  late final TextEditingController opponentNameController;
+  late final TextEditingController otheropponentNameController;
+  late final TextEditingController ourClientController;
+  late final TextEditingController areaController;
+  late final TextEditingController courtController;
+  late final TextEditingController judgeController;
+  late final TextEditingController ourAdvocatesController;
+  late final TextEditingController opponentAdvocatesController;
+  late final TextEditingController dateOfFilingController;
+  late final TextEditingController stageController;
+  late final TextEditingController noteController;
 
-  String? validateFileNo() {
-    if (fileNo.value.trim().isEmpty) return "File No cannot be empty.";
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Initialize controllers and sync with observables
+    fileNoController = TextEditingController(text: fileNo.value);
+    caseNoController = TextEditingController(text: caseNo.value);
+    applicantNameController = TextEditingController(text: applicantName.value);
+    otherapplicantNameController = TextEditingController(
+      text: otherApplicant.isNotEmpty ? otherApplicant.join(', ') : '',
+    );
+    opponentNameController = TextEditingController(text: opponentName.value);
+    otheropponentNameController = TextEditingController(
+      text: otherOpponent.isNotEmpty ? otherOpponent.join(', ') : '',
+    );
+    ourClientController = TextEditingController(text: ourClient.value);
+    areaController = TextEditingController(text: area.value);
+    courtController = TextEditingController(text: court.value);
+    judgeController = TextEditingController(text: judge.value);
+    ourAdvocatesController = TextEditingController(
+      text: ourAdvocates.isNotEmpty ? ourAdvocates.join(', ') : '',
+    );
+    opponentAdvocatesController = TextEditingController(
+      text: opponentAdvocates.isNotEmpty ? opponentAdvocates.join(', ') : '',
+    );
+    dateOfFilingController = TextEditingController(text: dateOfFiling.value);
+    stageController = TextEditingController(text: stage.value);
+    noteController = TextEditingController(text: note.value);
+
+    // Add listeners to update Rx variables
+    fileNoController.addListener(() => fileNo.value = fileNoController.text);
+    caseNoController.addListener(() => caseNo.value = caseNoController.text);
+    applicantNameController.addListener(() => applicantName.value = applicantNameController.text);
+    opponentNameController.addListener(() => opponentName.value = opponentNameController.text);
+    ourClientController.addListener(() => ourClient.value = ourClientController.text);
+    areaController.addListener(() => area.value = areaController.text);
+    courtController.addListener(() => court.value = courtController.text);
+    judgeController.addListener(() => judge.value = judgeController.text);
+    dateOfFilingController.addListener(() => dateOfFiling.value = dateOfFilingController.text);
+    stageController.addListener(() => stage.value = stageController.text);
+    noteController.addListener(() => note.value = noteController.text);
+
+  }
+
+  @override
+  void onClose() {
+    // Dispose controllers to avoid memory leaks
+    fileNoController.dispose();
+    caseNoController.dispose();
+    applicantNameController.dispose();
+    opponentNameController.dispose();
+    ourClientController.dispose();
+    areaController.dispose();
+    courtController.dispose();
+    judgeController.dispose();
+    dateOfFilingController.dispose();
+    stageController.dispose();
+    noteController.dispose();
+    super.onClose();
+  }
+
+  // Validation methods
+  String? validateFileNo(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "File No cannot be empty.";
+    }
     return null;
   }
 
-  String? validateCaseNo() {
-    if (caseNo.value.trim().isEmpty) return "Case No cannot be empty.";
+  String? validateCaseNo(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Case No cannot be empty.";
+    }
     return null;
   }
 
-  String? validateApplicantName() {
-    if (applicantName.value.trim().isEmpty) {
+  String? validateApplicantName(String? value) {
+    if (value == null || value.trim().isEmpty) {
       return "Applicant Name cannot be empty.";
     }
-    if (applicantName.value.trim().length < 3) {
+    if (value.trim().length < 3) {
       return "Applicant Name must be at least 3 characters.";
     }
     return null;
   }
 
-  String? validateOpponentName() {
-    if (opponentName.value.trim().isEmpty)
+  String? validateOpponentName(String? value) {
+    if (value == null || value.trim().isEmpty) {
       return "Opponent Name cannot be empty.";
+    }
     return null;
   }
 
-  String? validateClientName() {
-    if (clientName.value.trim().isEmpty) return "Client Name cannot be empty.";
+  String? validateOurClient(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Our Client cannot be empty.";
+    }
     return null;
   }
 
-  String? validateDateOfFiling() {
-    if (dateOfFiling.value.trim().isEmpty) {
+  String? validateJudge(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Judge cannot be empty.";
+    }
+    return null;
+  }
+
+  String? validateOurAdvocates(String? values) {
+    if (values == null || values.isEmpty) {
+      return "At least one Our Advocate is required.";
+    }
+    return null;
+  }
+
+  String? validateOpponentAdvocates(String? values) {
+    if (values == null || values.isEmpty) {
+      return "At least one Opponent Advocate is required.";
+    }
+    return null;
+  }
+
+  String? validateDateOfFiling(String? value) {
+    if (value == null || value.trim().isEmpty) {
       return "Date of Filing cannot be empty.";
     }
-    final regex = RegExp(r"^\d{2}/\d{2}/\d{4}$");
-    if (!regex.hasMatch(dateOfFiling.value.trim())) {
-      return "Enter a valid date in DD/MM/YYYY format.";
+    try {
+      // Attempt to parse the date in YYYY-MM-DD format
+      DateTime.parse(value.trim());
+    } catch (e) {
+      return "Enter a valid date in YYYY-MM-DD format.";
     }
     return null;
   }
 
-  String? validateStage() {
-    if (stage.value.trim().isEmpty) return "Stage cannot be empty.";
-    return null;
-  }
-
-  String? validatePreviousDate() {
-    if (previousDate.value.trim().isEmpty) {
-      return "Previous Date cannot be empty.";
-    }
-    final regex = RegExp(r"^\d{2}/\d{2}/\d{4}$");
-    if (!regex.hasMatch(previousDate.value.trim())) {
-      return "Enter a valid date in DD/MM/YYYY format.";
+  String? validateStage(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Stage cannot be empty.";
     }
     return null;
   }
 
-  String? validateArea() {
-    if (area.value.trim().isEmpty) return "Area cannot be empty.";
-    return null;
-  }
-
-  String? validateCourt() {
-    if (court.value.trim().isEmpty) return "Court cannot be empty.";
-    return null;
-  }
-
-  String? validateCaseNote() {
-    if (caseNote.value.trim().isEmpty) return "Case Note cannot be empty.";
-    return null;
-  }
-
-  String? validateMobileNumber() {
-    if (mobileNumber.value.trim().isEmpty) {
-      return "Mobile Number cannot be empty.";
-    }
-    final regex = RegExp(r"^\d{10}$");
-    if (!regex.hasMatch(mobileNumber.value.trim())) {
-      return "Enter a valid 10-digit mobile number.";
+  String? validateArea(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Area cannot be empty.";
     }
     return null;
   }
 
-  // -------------------------- Form-wide Validation ------------------------------
+  String? validateCourt(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Court cannot be empty.";
+    }
+    return null;
+  }
 
-  /// Validates all fields and returns a list of error messages.
-  List<String> validateAllFields() {
+  String? validateNote(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Note cannot be empty.";
+    }
+    return null;
+  }
+
+  // (Other validation methods here, as already written in your code...)
+
+List<String> validateAllFields() {
     List<String> errors = [];
 
+    // List of validation functions
     final validations = [
-      validateFileNo(),
-      validateCaseNo(),
-      validateApplicantName(),
-      validateOpponentName(),
-      validateClientName(),
-      validateDateOfFiling(),
-      validateStage(),
-      validatePreviousDate(),
-      validateArea(),
-      validateCourt(),
-      validateCaseNote(),
-      validateMobileNumber(),
+      validateFileNo(fileNo.value),
+      validateCaseNo(caseNo.value),
+      validateApplicantName(applicantName.value),
+      validateOpponentName(opponentName.value),
+      validateOurClient(ourClient.value),
+      validateDateOfFiling(dateOfFiling.value),
+      validateStage(stage.value),
+      validateArea(area.value),
+      validateCourt(court.value),
+      validateNote(note.value),
     ];
 
-    for (var validation in validations) {
-      if (validation != null) errors.add(validation);
+    // Iterate through the list of validation results and add any non-null errors
+    for (var error in validations) {
+      if (error != null) {
+        errors.add(error);
+      }
     }
 
     return errors;
   }
 
-  // ------------------------- Registration Logic -----------------------------
 
-  /// Attempts to register a case after validating all fields.
+  // Registration Logic
   Future<void> registerCase() async {
     final errors = validateAllFields();
 
     if (errors.isEmpty) {
       try {
-        // Prepare case data
-        final caseData = {
-          "fileNo": fileNo.value,
-          "caseNo": caseNo.value,
-          "applicantName": applicantName.value,
-          "opponentName": opponentName.value,
-          "clientName": clientName.value,
-          "dateOfFiling": dateOfFiling.value,
-          "stage": stage.value,
-          "previousDate": previousDate.value,
-          "area": area.value,
-          "court": court.value,
-          "caseNote": caseNote.value,
-          "mobileNumber": mobileNumber.value,
-        };
+        final parsedDate = DateTime.parse(dateOfFiling.value.trim());
+        final dateOnly =
+            DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
 
-        // Call the Firebase service to add the case
-        await CaseFirebaseServices().addCase(caseData as Case);
+        final caseData = Case(
+          fileNo: fileNo.value,
+          caseNo: caseNo.value,
+          applicantName: applicantName.value,
+          otherApplicant: otherApplicant.toList(),
+          opponentName: opponentName.value,
+          otherOpponent: otherOpponent.toList(),
+          ourClient: ourClient.value,
+          area: area.value,
+          court: court.value,
+          judge: judge.value,
+          ourAdvocates: ourAdvocates.toList(),
+          opponentAdvocates: opponentAdvocates.toList(),
+          dateOfFiling: dateOnly,
+          stage: stage.value,
+          note: note.value,
+        );
 
-        // Show success message
+        await CaseFirebaseServices().addCase(caseData);
+
         Get.snackbar(
           'Success',
           'Case Registered Successfully',
@@ -169,7 +270,6 @@ class RegistrationController extends GetxController {
           colorText: Colors.white,
         );
       } catch (error) {
-        // Handle Firebase errors
         Get.snackbar(
           'Error',
           'Failed to register case. Please try again.',
@@ -179,7 +279,6 @@ class RegistrationController extends GetxController {
         );
       }
     } else {
-      // Show all validation errors
       Get.snackbar(
         'Error',
         errors.join("\n"),
