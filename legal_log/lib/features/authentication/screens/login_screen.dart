@@ -84,7 +84,7 @@ class LoginScreen extends StatelessWidget {
                     // Validate the form fields
                     if (formKey.currentState!.validate()) {
                       // Navigate to dashboard if valid
-                      Get.toNamed('/dashboard');
+                      Get.toNamed('/home_page');
                     }
                   },
                   child: const Text('Login'),
