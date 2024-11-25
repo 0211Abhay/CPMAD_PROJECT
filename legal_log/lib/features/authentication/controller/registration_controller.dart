@@ -107,7 +107,7 @@ class RegistrationController extends GetxController {
   // Send OTP to email
   Future<void> sendVerificationEmail(String recipientEmail) async {
     final String senderEmail = 'aryan.langhanoja119561@marwadiuniversity.ac.in';
-    final String senderPassword = 'dvvm xula uqrn nolx'; // Your email password
+    final String senderPassword = 'czjo qktt owwt kwgv'; // Your email password
     generatedOtp.value = Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
 
     final smtpServer = gmail(senderEmail, senderPassword);
