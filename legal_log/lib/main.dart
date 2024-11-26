@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         '/client_add': (context) => ClientRegistrationScreen(),
         '/case_add': (context) => CaseRegistrationScreen(),
         '/add_profilepage': (context) => AddProfilepicture(),
-        '/home_page': (context) => Homescreen(),
+        '/home_page': (context) => HomeScreen(),
         "/verify_otp": (context) => OtpVerificationScreen(),
       },
     );
