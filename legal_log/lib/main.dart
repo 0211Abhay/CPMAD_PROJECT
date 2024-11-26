@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:legal_log/features/authentication/controller/login_controller.dart';
 import 'package:legal_log/features/authentication/screens/add_profilepicture.dart';
-import 'package:legal_log/features/authentication/screens/homeScreen.dart';
+// import 'package:legal_log/features/authentication/screens/homeScreen.dart';
 import 'package:legal_log/features/authentication/screens/login_screen.dart';
 import 'package:legal_log/features/authentication/screens/otp_screen.dart';
 import 'package:legal_log/features/authentication/screens/registration_screen.dart';
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         '/client_add': (context) => ClientRegistrationScreen(),
         '/case_add': (context) => CaseRegistrationScreen(),
         '/add_profilepage': (context) => AddProfilepicture(),
-        '/home_page': (context) => Homescreen(),
+        '/home_page': (context) => HomeScreen(),
         "/verify_otp": (context) => OtpVerificationScreen(),
       },
     );
