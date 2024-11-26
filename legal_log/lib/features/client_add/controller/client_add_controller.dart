@@ -1,11 +1,15 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:legal_log/features/client_add/model/client.dart';
-import 'package:legal_log/features/client_add/services/client_firebase_services.dart'; // Import your Firebase service file
+import 'package:legal_log/features/client_add/services/client_firebase_services.dart';
 
 /// Controller for managing client registration logic and form validation.
 class ClientAddController extends GetxController {
+  final formKey = GlobalKey<FormState>();
+
   // Observable variables for the form fields
+  final selectedCountryCode = '+91'.obs;
   final name = ''.obs;
   final address = ''.obs;
   final phoneNo = ''.obs;
@@ -13,56 +17,107 @@ class ClientAddController extends GetxController {
   final clientId = ''.obs;
   final caseNos = <String>[].obs; // List for associated case numbers
 
+  // TextEditingControllers for each field
+  late final TextEditingController nameController;
+  late final TextEditingController addressController;
+  late final TextEditingController phoneNoController;
+  late final TextEditingController emailController;
+  late final TextEditingController clientIdController;
+  late final TextEditingController caseNolistController;
+  // late final TextEditingController clientIdController;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    // Initialize controllers and sync with observables
+    nameController = TextEditingController(text: name.value);
+    addressController = TextEditingController(text: address.value);
+    phoneNoController = TextEditingController(text: phoneNo.value);
+    emailController = TextEditingController(text: email.value);
+    clientIdController = TextEditingController(text: clientId.value);
+    caseNolistController = TextEditingController(text: caseNos.join(', '));
+
+    // Add listeners to update Rx variables
+    nameController.addListener(() => name.value = nameController.text);
+    addressController.addListener(() => address.value = addressController.text);
+    phoneNoController.addListener(() => phoneNo.value = phoneNoController.text);
+    emailController.addListener(() => email.value = emailController.text);
+    clientIdController.addListener(() => clientId.value = clientIdController.text);
+        caseNolistController.addListener(() {
+      caseNos.value = caseNolistController.text
+          .split(',')
+          .map((e) => e.trim()) // Trim whitespace
+          .where((e) => e.isNotEmpty) // Ignore empty strings
+          .toList();
+    });
+  }
+
+  @override
+  void onClose() {
+    // Dispose controllers to avoid memory leaks
+    nameController.dispose();
+    addressController.dispose();
+    phoneNoController.dispose();
+    emailController.dispose();
+    clientIdController.dispose();
+    caseNolistController.dispose();
+    super.onClose();
+  }
+
   // ----------------------------- Validation Methods -----------------------------
-
-  String? validateName() {
-    if (name.value.trim().isEmpty) return "Name cannot be empty.";
-    if (name.value.trim().length < 3) {
-      return "Name must be at least 3 characters.";
-    }
+  String? validateName(String? value) {
+    if (value == null || value.trim().isEmpty) return "Name cannot be empty.";
+    if (value.trim().length < 3) return "Name must be at least 3 characters.";
     return null;
   }
 
-  String? validateAddress() {
-    if (address.value.trim().isEmpty) return "Address cannot be empty.";
+  String? validateAddress(String? value) {
+    if (value == null || value.trim().isEmpty)
+      return "Address cannot be empty.";
     return null;
   }
 
-  String? validatePhoneNo() {
-    if (phoneNo.value.trim().isEmpty) return "Phone number cannot be empty.";
-    final regex = RegExp(r"^\d{10}$");
-    if (!regex.hasMatch(phoneNo.value.trim())) {
-      return "Enter a valid 10-digit phone number.";
-    }
+  String? validateCaseNos(String? value) {
+    if (value == null || value.trim().isEmpty)
+      return "Case Numbers cannot be empty.";
     return null;
   }
 
-  String? validateEmail() {
-    if (email.value.trim().isEmpty) return "Email cannot be empty.";
+  String? validatePhoneNo(String? value) {
+    if (value == null || value.trim().isEmpty)
+      return 'Mobile number is required';
+    if (!RegExp(r'^\d{10}$').hasMatch(value.trim()))
+      return 'Enter a valid 10-digit mobile number';
+    return null;
+  }
+
+  String? validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) return "Email cannot be empty.";
     final regex = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-    if (!regex.hasMatch(email.value.trim())) {
-      return "Enter a valid email address.";
-    }
+    if (!regex.hasMatch(value.trim())) return "Enter a valid email address.";
     return null;
   }
 
-  String? validateClientId() {
-    if (clientId.value.trim().isEmpty) return "Client ID cannot be empty.";
+  String? validateClientId(String? value) {
+    if (value == null || value.trim().isEmpty)
+      return "Client ID cannot be empty.";
     return null;
   }
 
   // -------------------------- Form-wide Validation ------------------------------
-
   /// Validates all fields and returns a list of error messages.
   List<String> validateAllFields() {
     List<String> errors = [];
 
+    // Validate all fields
     final validations = [
-      validateName(),
-      validateAddress(),
-      validatePhoneNo(),
-      validateEmail(),
-      validateClientId(),
+      validateName(name.value),
+      validateAddress(address.value),
+      validatePhoneNo(phoneNo.value),
+      validateEmail(email.value),
+      validateClientId(clientId.value),
+      validateCaseNos(caseNos.join(', ')),
     ];
 
     for (var validation in validations) {
@@ -73,7 +128,6 @@ class ClientAddController extends GetxController {
   }
 
   // ------------------------- Registration Logic -----------------------------
-
   /// Attempts to register a client after validating all fields.
   Future<void> registerClient() async {
     final errors = validateAllFields();
@@ -121,5 +175,10 @@ class ClientAddController extends GetxController {
         colorText: Colors.white,
       );
     }
+  }
+
+  // Update the selected country code
+  void updateCountryCode(CountryCode code) {
+    selectedCountryCode.value = code.dialCode!;
   }
 }
