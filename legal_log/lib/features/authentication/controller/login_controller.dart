@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
@@ -75,6 +77,43 @@ class LoginController extends GetxController {
     return 'Location not available';
   }
 
+  // Fetch precise location using Geolocator and Geocoding
+  Future<String> getPreciseLocation() async {
+    try {
+      // Check permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        permission = await Geolocator.requestPermission();
+        if (permission != LocationPermission.whileInUse &&
+            permission != LocationPermission.always) {
+          return 'Permission denied';
+        }
+      }
+
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // Reverse geocode position
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks.first;
+        return '${place.locality}, ${place.administrativeArea}, ${place.country}';
+      } else {
+        return 'Location not found';
+      }
+    } catch (e) {
+      print('Error fetching precise location: $e');
+      return 'Error fetching precise location';
+    }
+  }
+
   // Send login notification email
   Future<void> sendLoginNotification(String email, String ipAddress, String location) async {
     final smtpServer = gmail(senderEmail, senderPassword);
@@ -106,35 +145,50 @@ class LoginController extends GetxController {
 
   // Login user
   Future<void> loginUser(String email, String password) async {
-    try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  try {
+    UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      // Fetch user data from Firestore
-      QuerySnapshot querySnapshot = await _firestore
-          .collection('advocate')
-          .where('email_address', isEqualTo: email)
-          .get();
+    // Fetch user data from Firestore
+    QuerySnapshot querySnapshot = await _firestore
+        .collection('advocate')
+        .where('email_address', isEqualTo: email)
+        .get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        var userData = querySnapshot.docs.first.data();
-        _storage.write('user', userData); // Store user data locally
+    if (querySnapshot.docs.isNotEmpty) {
+      var userData = querySnapshot.docs.first.data();
+      _storage.write('user', userData); // Store user data locally
 
-        // Fetch IP and location, then send notification
-        final ipAddress = await getIpAddress();
-        final location = await getLocationFromIp(ipAddress);
-        await sendLoginNotification(email, ipAddress, location);
+      // Fetch IP and location
+      final ipAddress = await getIpAddress();
+      final locationFromIp = await getLocationFromIp(ipAddress);
 
-        Get.toNamed('/home_page');
-      } else {
-        Get.snackbar('Error', 'User data not found in Firestore');
-      }
-    } catch (e) {
-      Get.snackbar('Login Error', e.toString());
+      // Fetch precise location
+      final preciseLocation = await getPreciseLocation();
+
+      // Choose the most detailed location
+      final location = preciseLocation != 'Permission denied'
+          ? preciseLocation
+          : locationFromIp;
+
+      // Send login notification
+      await sendLoginNotification(email, ipAddress, location);
+
+      // Dismiss loader and navigate to home page
+      Get.back(); // Close the loader dialog
+      Get.toNamed('/home_page');
+    } else {
+      Get.back(); // Close the loader dialog
+      Get.snackbar('Error', 'User data not found in Firestore');
     }
+  } catch (e) {
+    Get.back(); // Close the loader dialog
+    Get.snackbar('Login Error', e.toString());
   }
+}
+
 
   // Logout user
   Future<void> logout() async {
