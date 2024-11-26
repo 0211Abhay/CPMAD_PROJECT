@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:legal_log/common_widgets/custom_text_fields.dart';
+import 'package:legal_log/common_widgets/show_loader.dart';
 import 'package:legal_log/features/authentication/controller/login_controller.dart';
 import 'package:lottie/lottie.dart';
 
@@ -8,7 +9,8 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>(); // Form key
-  final LoginController loginController = Get.put(LoginController()); // Controller
+  final LoginController loginController =
+      Get.put(LoginController()); // Controller
 
   LoginScreen({super.key});
 
@@ -75,6 +77,11 @@ class LoginScreen extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
+                          showLottieDialog(
+                            animationPath:
+                                'assets/lottie/hammer.json', // Path to your Lottie loader animation
+                            message: 'Logging in, please wait...',
+                          );
                           // Attempt login
                           await loginController.loginUser(
                             emailController.text.trim(),
@@ -117,7 +124,8 @@ class LoginScreen extends StatelessWidget {
                         const Text("Don't have an account?"),
                         TextButton(
                           onPressed: () {
-                            Get.toNamed('/register'); // Navigate to registration
+                            Get.toNamed(
+                                '/register'); // Navigate to registration
                           },
                           child: const Text('Register'),
                         ),
