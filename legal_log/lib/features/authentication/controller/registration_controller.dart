@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:legal_log/common_widgets/show_loader.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:legal_log/features/authentication/model/advocate_model.dart';
@@ -13,6 +14,7 @@ class RegistrationController extends GetxController {
   // Firebase Instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+var isLoading = false.obs;
 
   // Form controllers
   var nameController = TextEditingController();
@@ -128,20 +130,115 @@ class RegistrationController extends GetxController {
   }
 
   // Verify OTP
-  void verifyOtp(int userInputOtp) {
+  // void verifyOtp(int userInputOtp) {
+  //   if (userInputOtp == generatedOtp.value) {
+  //     print("OTP verified successfully!");
+  //     // Proceed to register the user in Firestore
+  //     registerUser();
+  //   } else {
+  //     Get.snackbar(
+  //       'Error',
+  //       'Invalid OTP. Please try again.',
+  //       backgroundColor: Colors.red,
+  //       colorText: Colors.white,
+  //     );
+  //   }
+  // }
+
+//   void verifyOtp(int userInputOtp) async {
+//   // Prevent multiple taps
+//   if (isLoading.value) return;
+//   isLoading.value = true;
+
+//   // Show loading animation
+//   showLottieDialog(
+//     animationPath: 'assets/lottie/Loading.json',
+//     message: 'Verifying OTP...',
+//   );
+
+//   try {
+//     await Future.delayed(Duration(seconds: 8)); // Simulate OTP verification delay
+
+//     if (userInputOtp == generatedOtp.value) {
+//       // Show success animation
+//       showLottieDialog(
+//         animationPath: 'assets/lottie/hammer.json',
+//         message: 'OTP Verified Successfully!',
+//         autoClose: true,
+//       );
+
+//       await registerUser();
+//     } else {
+//       // Show error animation
+//       showLottieDialog(
+//         animationPath: 'assets/lottie/cross.json',
+//         message: 'Invalid OTP. Please try again.',
+//         autoClose: true,
+//       );
+//     }
+//   } catch (e) {
+//     // Show error dialog
+//     showLottieDialog(
+//       animationPath: 'assets/lottie/cross.json',
+//       message: 'An error occurred. Please try again later.',
+//       autoClose: true,
+//     );
+//   } finally {
+//     isLoading.value = false;
+//     Get.back(); // Close the loading dialog
+//   }
+// }
+
+void verifyOtp(int userInputOtp) async {
+  if (isLoading.value) return; // Prevent multiple taps
+  isLoading.value = true;
+
+  // Show loading animation
+  showLottieDialog(
+    animationPath: 'assets/lottie/Loading.json',
+    message: 'Verifying OTP...',
+  );
+
+  try {
+    await Future.delayed(Duration(seconds: 4)); // Simulate OTP verification delay
+
     if (userInputOtp == generatedOtp.value) {
-      print("OTP verified successfully!");
-      // Proceed to register the user in Firestore
-      registerUser();
-    } else {
-      Get.snackbar(
-        'Error',
-        'Invalid OTP. Please try again.',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      // Show success animation
+      Get.back(); // Close the loader before showing success dialog
+      showLottieDialog(
+        animationPath: 'assets/lottie/hammer.json',
+        message: 'OTP Verified Successfully!',
+        autoClose: true,
       );
+      await registerUser();
+      
+    } else {
+      // Show error animation
+      // Get.back(); // Close the loader before showing error dialog
+      showLottieDialog(
+        animationPath: 'assets/lottie/cross.json',
+        message: 'Invalid OTP. Please try again.',
+        autoClose: true,
+      );
+
+      await Future.delayed(Duration(seconds: 2)); // Allow user to see error dialog
     }
+  } catch (e) {
+    // Show error dialog
+    // Get.back(); // Close the loader before showing error dialog
+    showLottieDialog(
+      animationPath: 'assets/lottie/cross.json',
+      message: 'An error occurred. Please try again later.',
+      autoClose: true,
+    );
+
+    await Future.delayed(Duration(seconds: 2)); // Allow user to see error dialog
+  } finally {
+    isLoading.value = false;
+    Get.back(); // Close the remaining dialog if any
   }
+}
+
 
   // Register user after OTP verification
     // Register user after OTP verification
