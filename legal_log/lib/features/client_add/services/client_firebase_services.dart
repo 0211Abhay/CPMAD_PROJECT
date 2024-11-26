@@ -9,20 +9,20 @@ class ClientFirebaseServices {
     final clientData = client.toJson();
 
     // Add a new document with a generated ID
-    db.collection("clients").add(clientData).then((DocumentReference doc) =>
+    db.collection("client").add(clientData).then((DocumentReference doc) =>
         // ignore: avoid_print
         print("Client added with ID: ${doc.id}"));
   }
 
   // Read - Fetch all clients
   Stream<QuerySnapshot> fetchClients() {
-    return db.collection('clients').snapshots();
+    return db.collection('client').snapshots();
   }
 
   // Update a client
   updateClient(Client client, String documentId) {
     return db
-        .collection("clients")
+        .collection("client")
         .doc(documentId) // Use the specific document ID passed in
         .update(client.toJson()) // Convert Client object to JSON for updating
         // ignore: avoid_print
@@ -34,7 +34,7 @@ class ClientFirebaseServices {
   // Delete a client by document ID
   deleteClient(String documentId) {
     return db
-        .collection("clients")
+        .collection("client")
         .doc(documentId)
         .delete()
         // ignore: avoid_print
@@ -47,7 +47,7 @@ class ClientFirebaseServices {
   Future<Client?> fetchClientById(String documentId) async {
     try {
       DocumentSnapshot doc =
-          await db.collection("clients").doc(documentId).get();
+          await db.collection("client").doc(documentId).get();
 
       if (doc.exists) {
         // Convert the document data to a map and then to a Client object
@@ -68,7 +68,7 @@ class ClientFirebaseServices {
     String? email,
     String? caseNo,
   }) {
-    Query query = db.collection("clients");
+    Query query = db.collection("client");
 
     // Add filters if provided
     if (name != null && name.isNotEmpty) {

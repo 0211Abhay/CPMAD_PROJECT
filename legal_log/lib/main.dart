@@ -13,7 +13,6 @@ import 'package:legal_log/features/home_page/screens/home_page.dart';
 import 'package:legal_log/splash_screen.dart';
 import 'firebase_options.dart';
 
-
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();

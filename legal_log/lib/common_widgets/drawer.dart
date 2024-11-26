@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:legal_log/features/authentication/controller/login_controller.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+  final LoginController loginController = Get.find<LoginController>(); 
+  CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,7 @@ class CustomDrawer extends StatelessWidget {
               color: Colors.grey,
             ),
             title: const Text('Home'),
-            onTap: () => Navigator.pop(context),
+            onTap: () => Get.offNamed('/home'),
           ),
           ListTile(
             leading: Icon(
@@ -58,7 +61,7 @@ class CustomDrawer extends StatelessWidget {
               color: Colors.grey,
             ),
             title: const Text('Add Case'),
-            onTap: () => Navigator.pop(context),
+            onTap: () => Get.offNamed('/case_add'),
           ),
           ListTile(
             leading: Icon(
@@ -67,7 +70,7 @@ class CustomDrawer extends StatelessWidget {
               color: Colors.grey,
             ),
             title: const Text('Add Client'),
-            onTap: () => Navigator.pop(context),
+            onTap: () => Get.offNamed('/client_add'),
           ),
           ListTile(
             leading: Icon(
@@ -85,7 +88,10 @@ class CustomDrawer extends StatelessWidget {
               color: Colors.grey,
             ),
             title: const Text('Log Out'),
-            onTap: () => Navigator.pop(context),
+            onTap: () => loginController.logout(),
+
+            //
+          
           ),
         ],
       ),
