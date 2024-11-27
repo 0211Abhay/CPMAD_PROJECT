@@ -74,23 +74,27 @@ class LoginScreen extends StatelessWidget {
 
                     SizedBox(height: screenHeight * 0.02),
 
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          showLottieDialog(
-                            animationPath:
-                                'assets/lottie/hammer.json', // Path to your Lottie loader animation
-                            message: 'Logging in, please wait...',
-                          );
-                          // Attempt login
-                          await loginController.loginUser(
-                            emailController.text.trim(),
-                            passwordController.text.trim(),
-                          );
-                        }
-                      },
-                      child: const Text('Login'),
+                    SizedBox(
+                      height: 50, // Set appropriate height for the box
+                      width: double.infinity, // Adjust width as per your layout
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            showLottieDialog(
+                              animationPath: 'assets/lottie/hammer.json', // Path to your Lottie loader animation
+                              message: 'Logging in, please wait...',
+                            );
+                            // Attempt login
+                            await loginController.loginUser(
+                              emailController.text.trim(),
+                              passwordController.text.trim(),
+                            );
+                          }
+                        },
+                        child: const Text('Login'),
+                      ),
                     ),
+
 
                     SizedBox(height: screenHeight * 0.02),
                     const Text('Or login with'),

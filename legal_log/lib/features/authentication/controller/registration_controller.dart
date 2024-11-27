@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/common_widgets/show_loader.dart';
+import 'package:legal_log/features/home_page/controller/home_screen_controller.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:legal_log/features/authentication/model/advocate_model.dart';
@@ -14,7 +15,7 @@ class RegistrationController extends GetxController {
   // Firebase Instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-var isLoading = false.obs;
+  var isLoading = false.obs;
 
   // Form controllers
   var nameController = TextEditingController();
@@ -35,7 +36,7 @@ var isLoading = false.obs;
     selectedCountryCode.value = code.dialCode!;
   }
 
-  bool agreetoTermss(){
+  bool agreetoTermss() {
     if (!agreeToTerms.value) {
       Get.snackbar(
         'Error',
@@ -44,11 +45,11 @@ var isLoading = false.obs;
         colorText: Colors.white,
       );
       return false;
-    }else{
+    } else {
       return true;
     }
-
   }
+
   // Toggle password visibility
   void togglePasswordVisibility() {
     obscurePassword.value = !obscurePassword.value;
@@ -110,7 +111,8 @@ var isLoading = false.obs;
   Future<void> sendVerificationEmail(String recipientEmail) async {
     final String senderEmail = 'aryan.langhanoja119561@marwadiuniversity.ac.in';
     final String senderPassword = 'dvvm xula uqrn nolx'; // Your email password
-    generatedOtp.value = Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
+    generatedOtp.value =
+        Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
     print('Generated OTP: ${generatedOtp.value}');
 
     final smtpServer = gmail(senderEmail, senderPassword);
@@ -189,59 +191,60 @@ var isLoading = false.obs;
 //   }
 // }
 
-void verifyOtp(int userInputOtp) async {
-  if (isLoading.value) return; // Prevent multiple taps
-  isLoading.value = true;
+  void verifyOtp(int userInputOtp) async {
+    if (isLoading.value) return; // Prevent multiple taps
+    isLoading.value = true;
 
-  // Show loading animation
-  showLottieDialog(
-    animationPath: 'assets/lottie/Loading.json',
-    message: 'Verifying OTP...',
-  );
+    // Show loading animation
+    showLottieDialog(
+      animationPath: 'assets/lottie/Loading.json',
+      message: 'Verifying OTP...',
+    );
 
-  try {
-    await Future.delayed(Duration(seconds: 4)); // Simulate OTP verification delay
+    try {
+      await Future.delayed(
+          Duration(seconds: 4)); // Simulate OTP verification delay
 
-    if (userInputOtp == generatedOtp.value) {
-      // Show success animation
-      Get.back(); // Close the loader before showing success dialog
-      showLottieDialog(
-        animationPath: 'assets/lottie/hammer.json',
-        message: 'OTP Verified Successfully!',
-        autoClose: true,
-      );
-      await registerUser();
-      
-    } else {
-      // Show error animation
+      if (userInputOtp == generatedOtp.value) {
+        // Show success animation
+        Get.back(); // Close the loader before showing success dialog
+        showLottieDialog(
+          animationPath: 'assets/lottie/hammer.json',
+          message: 'OTP Verified Successfully!',
+          autoClose: true,
+        );
+        await registerUser();
+      } else {
+        // Show error animation
+        // Get.back(); // Close the loader before showing error dialog
+        showLottieDialog(
+          animationPath: 'assets/lottie/cross.json',
+          message: 'Invalid OTP. Please try again.',
+          autoClose: true,
+        );
+
+        await Future.delayed(
+            Duration(seconds: 2)); // Allow user to see error dialog
+      }
+    } catch (e) {
+      // Show error dialog
       // Get.back(); // Close the loader before showing error dialog
       showLottieDialog(
         animationPath: 'assets/lottie/cross.json',
-        message: 'Invalid OTP. Please try again.',
+        message: 'An error occurred. Please try again later.',
         autoClose: true,
       );
 
-      await Future.delayed(Duration(seconds: 2)); // Allow user to see error dialog
+      await Future.delayed(
+          Duration(seconds: 2)); // Allow user to see error dialog
+    } finally {
+      isLoading.value = false;
+      Get.back(); // Close the remaining dialog if any
     }
-  } catch (e) {
-    // Show error dialog
-    // Get.back(); // Close the loader before showing error dialog
-    showLottieDialog(
-      animationPath: 'assets/lottie/cross.json',
-      message: 'An error occurred. Please try again later.',
-      autoClose: true,
-    );
-
-    await Future.delayed(Duration(seconds: 2)); // Allow user to see error dialog
-  } finally {
-    isLoading.value = false;
-    Get.back(); // Close the remaining dialog if any
   }
-}
-
 
   // Register user after OTP verification
-    // Register user after OTP verification
+  // Register user after OTP verification
   Future<void> registerUser() async {
     if (!agreeToTerms.value) {
       Get.snackbar(
@@ -255,10 +258,12 @@ void verifyOtp(int userInputOtp) async {
 
     try {
       // Concatenate country code with the mobile number
-      String fullPhoneNumber = '${selectedCountryCode.value}${mobileController.text.trim()}';
+      String fullPhoneNumber =
+          '${selectedCountryCode.value}${mobileController.text.trim()}';
 
       // Register user in Firebase Auth
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
@@ -273,7 +278,10 @@ void verifyOtp(int userInputOtp) async {
       );
 
       // Store advocate details in Firestore
-      await _firestore.collection('advocate').doc(userCredential.user!.uid).set({
+      await _firestore
+          .collection('advocate')
+          .doc(userCredential.user!.uid)
+          .set({
         'advocate_id': advocate.advocateId,
         'email_address': advocate.emailAddress,
         'name': advocate.name,
@@ -309,5 +317,4 @@ void verifyOtp(int userInputOtp) async {
       );
     }
   }
-
 }
