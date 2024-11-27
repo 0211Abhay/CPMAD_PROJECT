@@ -146,6 +146,7 @@ class LoginController extends GetxController {
   // Login user
   Future<void> loginUser(String email, String password) async {
   try {
+    // ignore: unused_local_variable
     UserCredential userCredential = await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
