@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:legal_log/features/settings/screens/setting_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:legal_log/splash_screen.dart';
@@ -36,8 +37,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),  // This will display the splash screen first
-      routes: {
-        '/home': (context) => HomeScreen(), // Define home route for easier navigation
+      routes: { // Define home route for easier navigation
         '/login': (context) => LoginScreen(), 
         '/register': (context) => RegistrationScreen(),
         '/client_add': (context) => ClientRegistrationScreen(),
@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/add_profilepage': (context) => AddProfilepicture(),
         '/home_page': (context) => HomeScreen(),
         "/verify_otp": (context) => OtpVerificationScreen(),
+        '/settings': (context) => SettingScreen(),
       },
     );
   }
