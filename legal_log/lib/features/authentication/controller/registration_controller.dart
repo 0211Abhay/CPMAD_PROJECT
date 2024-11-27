@@ -106,6 +106,69 @@ var isLoading = false.obs;
     return null;
   }
 
+  // Check if email and phone number are already registered
+Future<bool> verifyEmailAndPhone() async {
+  try {
+    // Concatenate country code with the mobile number
+    // String fullPhoneNumber = '${selectedCountryCode.value}${mobileController.text.trim()}';
+
+    // Check if email already exists in Firestore
+    QuerySnapshot emailQuery = await _firestore
+        .collection('advocate')
+        .where('email_address', isEqualTo: emailController.text.trim())
+        .get();
+
+    // Check if phone number already exists in Firestore
+    // QuerySnapshot phoneQuery = await _firestore
+    //     .collection('advocate')
+    //     .where('phone_no', isEqualTo: fullPhoneNumber)
+    //     .get();
+
+    if (emailQuery.docs.isNotEmpty) {
+      Get.snackbar(
+        'Error',
+        'The email address is already registered.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+
+    // if (phoneQuery.docs.isNotEmpty) {
+    //   Get.snackbar(
+    //     'Error',
+    //     'The phone number is already registered.',
+    //     backgroundColor: Colors.red,
+    //     colorText: Colors.white,
+    //   );
+    //   return false;
+    // }
+
+    return true; // Email and phone are not registered
+  } catch (e) {
+    Get.snackbar(
+      'Error',
+      'An error occurred during verification. Please try again later.',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+    return false;
+  }
+}
+
+// Send OTP only if email and phone are verified
+Future<void> sendOtpIfVerified() async {
+  // Validate email and phone first
+  bool isVerified = await verifyEmailAndPhone();
+
+  if (isVerified) {
+    // Send OTP if verification succeeds
+    await sendVerificationEmail(emailController.text.trim());
+    Get.toNamed('/verify_otp'); // Navigate to OTP verification page
+  }
+}
+
+
   // Send OTP to email
   Future<void> sendVerificationEmail(String recipientEmail) async {
     final String senderEmail = 'aryan.langhanoja119561@marwadiuniversity.ac.in';
@@ -128,66 +191,6 @@ var isLoading = false.obs;
       print('Message not sent. Error: $e');
     }
   }
-
-  // Verify OTP
-  // void verifyOtp(int userInputOtp) {
-  //   if (userInputOtp == generatedOtp.value) {
-  //     print("OTP verified successfully!");
-  //     // Proceed to register the user in Firestore
-  //     registerUser();
-  //   } else {
-  //     Get.snackbar(
-  //       'Error',
-  //       'Invalid OTP. Please try again.',
-  //       backgroundColor: Colors.red,
-  //       colorText: Colors.white,
-  //     );
-  //   }
-  // }
-
-//   void verifyOtp(int userInputOtp) async {
-//   // Prevent multiple taps
-//   if (isLoading.value) return;
-//   isLoading.value = true;
-
-//   // Show loading animation
-//   showLottieDialog(
-//     animationPath: 'assets/lottie/Loading.json',
-//     message: 'Verifying OTP...',
-//   );
-
-//   try {
-//     await Future.delayed(Duration(seconds: 8)); // Simulate OTP verification delay
-
-//     if (userInputOtp == generatedOtp.value) {
-//       // Show success animation
-//       showLottieDialog(
-//         animationPath: 'assets/lottie/hammer.json',
-//         message: 'OTP Verified Successfully!',
-//         autoClose: true,
-//       );
-
-//       await registerUser();
-//     } else {
-//       // Show error animation
-//       showLottieDialog(
-//         animationPath: 'assets/lottie/cross.json',
-//         message: 'Invalid OTP. Please try again.',
-//         autoClose: true,
-//       );
-//     }
-//   } catch (e) {
-//     // Show error dialog
-//     showLottieDialog(
-//       animationPath: 'assets/lottie/cross.json',
-//       message: 'An error occurred. Please try again later.',
-//       autoClose: true,
-//     );
-//   } finally {
-//     isLoading.value = false;
-//     Get.back(); // Close the loading dialog
-//   }
-// }
 
 void verifyOtp(int userInputOtp) async {
   if (isLoading.value) return; // Prevent multiple taps

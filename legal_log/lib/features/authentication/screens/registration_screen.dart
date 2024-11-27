@@ -144,12 +144,10 @@ class RegistrationScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           if (controller.agreetoTermss()) {
-                            controller.sendVerificationEmail(
-                                controller.emailController.text.trim());
-                            Get.toNamed('/verify_otp');
+                            await controller.sendOtpIfVerified();
                           } else {
                             Get.snackbar(
                               'Error',
