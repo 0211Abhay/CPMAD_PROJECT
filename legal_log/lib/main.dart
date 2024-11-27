@@ -1,17 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:legal_log/features/authentication/controller/login_controller.dart';
-import 'package:legal_log/features/authentication/screens/add_profilepicture.dart';
-// import 'package:legal_log/features/authentication/screens/homeScreen.dart';
-import 'package:legal_log/features/authentication/screens/login_screen.dart';
-import 'package:legal_log/features/authentication/screens/otp_screen.dart';
-import 'package:legal_log/features/authentication/screens/registration_screen.dart';
+import 'firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'package:legal_log/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:legal_log/features/case_add/screen/case_add.dart';
-import 'package:legal_log/features/client_add/screen/client_add.dart';
 import 'package:legal_log/features/home_page/screens/home_page.dart';
-import 'package:legal_log/splash_screen.dart';
-import 'firebase_options.dart';
+import 'package:legal_log/features/client_add/screen/client_add.dart';
+import 'package:legal_log/features/authentication/screens/otp_screen.dart';
+import 'package:legal_log/features/authentication/screens/login_screen.dart';
+import 'package:legal_log/features/authentication/screens/add_profilepicture.dart';
+import 'package:legal_log/features/authentication/controller/login_controller.dart';
+import 'package:legal_log/features/authentication/screens/registration_screen.dart';
 
 void main() async {
 
