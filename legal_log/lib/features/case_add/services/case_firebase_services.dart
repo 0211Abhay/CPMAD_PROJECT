@@ -18,14 +18,14 @@ class CaseFirebaseServices {
   // Read - Fetch all legal cases
   Stream<QuerySnapshot> fetchLegalCases() {
     Stream<QuerySnapshot> collectionStream =
-        FirebaseFirestore.instance.collection('cases').snapshots();
+        FirebaseFirestore.instance.collection('case').snapshots();
     return collectionStream;
   }
 
   // Update a legal case
-  updateCase(Case legalCase, String documentId) {
+  updateCase(Case legalCase, String? documentId) {
     return db
-        .collection("cases")
+        .collection("case")
         .doc(documentId) // Use the specific document ID passed in
         .update(
             legalCase.toJson()) // Convert LegalCase object to JSON for updating
@@ -36,9 +36,9 @@ class CaseFirebaseServices {
   }
 
   // Delete a legal case by document ID
-  deleteLegalCase(String documentId) {
+  deleteLegalCase(String? documentId) {
     return db
-        .collection("cases")
+        .collection("case")
         .doc(documentId)
         .delete()
         // ignore: avoid_print

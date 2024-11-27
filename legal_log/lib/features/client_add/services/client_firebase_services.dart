@@ -20,7 +20,7 @@ class ClientFirebaseServices {
   }
 
   // Update a client
-  updateClient(Client client, String documentId) {
+  updateClient(Client client, String? documentId) {
     return db
         .collection("client")
         .doc(documentId) // Use the specific document ID passed in
@@ -32,7 +32,7 @@ class ClientFirebaseServices {
   }
 
   // Delete a client by document ID
-  deleteClient(String documentId) {
+  deleteClient(String? documentId) {
     return db
         .collection("client")
         .doc(documentId)
