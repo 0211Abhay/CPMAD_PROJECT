@@ -1,5 +1,6 @@
 class Client {
   // Properties
+  final String? clinet_id;
   final String name;
   final String address;
   final String phoneNo;
@@ -9,6 +10,7 @@ class Client {
 
   // Constructor with required fields
   Client({
+    this.clinet_id,
     required this.name,
     required this.address,
     required this.phoneNo,

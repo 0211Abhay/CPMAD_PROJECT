@@ -1,5 +1,6 @@
 class Case {
   // Properties
+  final String? case_id;
   final String? fileNo;
   final String? caseNo;
   final String? applicantName;
@@ -18,6 +19,7 @@ class Case {
 
   // Constructor with required fields
   Case({
+    this.case_id,
     required this.fileNo,
     required this.caseNo,
     required this.applicantName,
