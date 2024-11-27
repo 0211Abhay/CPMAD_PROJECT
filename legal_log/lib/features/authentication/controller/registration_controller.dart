@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/common_widgets/show_loader.dart';
-import 'package:legal_log/features/home_page/controller/home_screen_controller.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:legal_log/features/authentication/model/advocate_model.dart';
@@ -15,7 +14,7 @@ class RegistrationController extends GetxController {
   // Firebase Instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  var isLoading = false.obs;
+var isLoading = false.obs;
 
   // Form controllers
   var nameController = TextEditingController();
@@ -36,7 +35,7 @@ class RegistrationController extends GetxController {
     selectedCountryCode.value = code.dialCode!;
   }
 
-  bool agreetoTermss() {
+  bool agreetoTermss(){
     if (!agreeToTerms.value) {
       Get.snackbar(
         'Error',
@@ -45,11 +44,11 @@ class RegistrationController extends GetxController {
         colorText: Colors.white,
       );
       return false;
-    } else {
+    }else{
       return true;
     }
-  }
 
+  }
   // Toggle password visibility
   void togglePasswordVisibility() {
     obscurePassword.value = !obscurePassword.value;
@@ -107,12 +106,74 @@ class RegistrationController extends GetxController {
     return null;
   }
 
+  // Check if email and phone number are already registered
+Future<bool> verifyEmailAndPhone() async {
+  try {
+    // Concatenate country code with the mobile number
+    // String fullPhoneNumber = '${selectedCountryCode.value}${mobileController.text.trim()}';
+
+    // Check if email already exists in Firestore
+    QuerySnapshot emailQuery = await _firestore
+        .collection('advocate')
+        .where('email_address', isEqualTo: emailController.text.trim())
+        .get();
+
+    // Check if phone number already exists in Firestore
+    // QuerySnapshot phoneQuery = await _firestore
+    //     .collection('advocate')
+    //     .where('phone_no', isEqualTo: fullPhoneNumber)
+    //     .get();
+
+    if (emailQuery.docs.isNotEmpty) {
+      Get.snackbar(
+        'Error',
+        'The email address is already registered.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+
+    // if (phoneQuery.docs.isNotEmpty) {
+    //   Get.snackbar(
+    //     'Error',
+    //     'The phone number is already registered.',
+    //     backgroundColor: Colors.red,
+    //     colorText: Colors.white,
+    //   );
+    //   return false;
+    // }
+
+    return true; // Email and phone are not registered
+  } catch (e) {
+    Get.snackbar(
+      'Error',
+      'An error occurred during verification. Please try again later.',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+    return false;
+  }
+}
+
+// Send OTP only if email and phone are verified
+Future<void> sendOtpIfVerified() async {
+  // Validate email and phone first
+  bool isVerified = await verifyEmailAndPhone();
+
+  if (isVerified) {
+    // Send OTP if verification succeeds
+    await sendVerificationEmail(emailController.text.trim());
+    Get.toNamed('/verify_otp'); // Navigate to OTP verification page
+  }
+}
+
+
   // Send OTP to email
   Future<void> sendVerificationEmail(String recipientEmail) async {
     final String senderEmail = 'aryan.langhanoja119561@marwadiuniversity.ac.in';
     final String senderPassword = 'dvvm xula uqrn nolx'; // Your email password
-    generatedOtp.value =
-        Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
+    generatedOtp.value = Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
     print('Generated OTP: ${generatedOtp.value}');
 
     final smtpServer = gmail(senderEmail, senderPassword);
@@ -131,120 +192,59 @@ class RegistrationController extends GetxController {
     }
   }
 
-  // Verify OTP
-  // void verifyOtp(int userInputOtp) {
-  //   if (userInputOtp == generatedOtp.value) {
-  //     print("OTP verified successfully!");
-  //     // Proceed to register the user in Firestore
-  //     registerUser();
-  //   } else {
-  //     Get.snackbar(
-  //       'Error',
-  //       'Invalid OTP. Please try again.',
-  //       backgroundColor: Colors.red,
-  //       colorText: Colors.white,
-  //     );
-  //   }
-  // }
+void verifyOtp(int userInputOtp) async {
+  if (isLoading.value) return; // Prevent multiple taps
+  isLoading.value = true;
 
-//   void verifyOtp(int userInputOtp) async {
-//   // Prevent multiple taps
-//   if (isLoading.value) return;
-//   isLoading.value = true;
+  // Show loading animation
+  showLottieDialog(
+    animationPath: 'assets/lottie/Loading.json',
+    message: 'Verifying OTP...',
+  );
 
-//   // Show loading animation
-//   showLottieDialog(
-//     animationPath: 'assets/lottie/Loading.json',
-//     message: 'Verifying OTP...',
-//   );
+  try {
+    await Future.delayed(Duration(seconds: 4)); // Simulate OTP verification delay
 
-//   try {
-//     await Future.delayed(Duration(seconds: 8)); // Simulate OTP verification delay
-
-//     if (userInputOtp == generatedOtp.value) {
-//       // Show success animation
-//       showLottieDialog(
-//         animationPath: 'assets/lottie/hammer.json',
-//         message: 'OTP Verified Successfully!',
-//         autoClose: true,
-//       );
-
-//       await registerUser();
-//     } else {
-//       // Show error animation
-//       showLottieDialog(
-//         animationPath: 'assets/lottie/cross.json',
-//         message: 'Invalid OTP. Please try again.',
-//         autoClose: true,
-//       );
-//     }
-//   } catch (e) {
-//     // Show error dialog
-//     showLottieDialog(
-//       animationPath: 'assets/lottie/cross.json',
-//       message: 'An error occurred. Please try again later.',
-//       autoClose: true,
-//     );
-//   } finally {
-//     isLoading.value = false;
-//     Get.back(); // Close the loading dialog
-//   }
-// }
-
-  void verifyOtp(int userInputOtp) async {
-    if (isLoading.value) return; // Prevent multiple taps
-    isLoading.value = true;
-
-    // Show loading animation
-    showLottieDialog(
-      animationPath: 'assets/lottie/Loading.json',
-      message: 'Verifying OTP...',
-    );
-
-    try {
-      await Future.delayed(
-          Duration(seconds: 4)); // Simulate OTP verification delay
-
-      if (userInputOtp == generatedOtp.value) {
-        // Show success animation
-        Get.back(); // Close the loader before showing success dialog
-        showLottieDialog(
-          animationPath: 'assets/lottie/hammer.json',
-          message: 'OTP Verified Successfully!',
-          autoClose: true,
-        );
-        await registerUser();
-      } else {
-        // Show error animation
-        // Get.back(); // Close the loader before showing error dialog
-        showLottieDialog(
-          animationPath: 'assets/lottie/cross.json',
-          message: 'Invalid OTP. Please try again.',
-          autoClose: true,
-        );
-
-        await Future.delayed(
-            Duration(seconds: 2)); // Allow user to see error dialog
-      }
-    } catch (e) {
-      // Show error dialog
+    if (userInputOtp == generatedOtp.value) {
+      // Show success animation
+      Get.back(); // Close the loader before showing success dialog
+      showLottieDialog(
+        animationPath: 'assets/lottie/hammer.json',
+        message: 'OTP Verified Successfully!',
+        autoClose: true,
+      );
+      await registerUser();
+      
+    } else {
+      // Show error animation
       // Get.back(); // Close the loader before showing error dialog
       showLottieDialog(
         animationPath: 'assets/lottie/cross.json',
-        message: 'An error occurred. Please try again later.',
+        message: 'Invalid OTP. Please try again.',
         autoClose: true,
       );
 
-      await Future.delayed(
-          Duration(seconds: 2)); // Allow user to see error dialog
-    } finally {
-      isLoading.value = false;
-      Get.back(); // Close the remaining dialog if any
+      await Future.delayed(Duration(seconds: 2)); // Allow user to see error dialog
     }
+  } catch (e) {
+    // Show error dialog
+    // Get.back(); // Close the loader before showing error dialog
+    showLottieDialog(
+      animationPath: 'assets/lottie/cross.json',
+      message: 'An error occurred. Please try again later.',
+      autoClose: true,
+    );
+
+    await Future.delayed(Duration(seconds: 2)); // Allow user to see error dialog
+  } finally {
+    isLoading.value = false;
+    Get.back(); // Close the remaining dialog if any
   }
+}
+
 
   // Register user after OTP verification
-  // Register user after OTP verification
+    // Register user after OTP verification
   Future<void> registerUser() async {
     if (!agreeToTerms.value) {
       Get.snackbar(
@@ -258,12 +258,10 @@ class RegistrationController extends GetxController {
 
     try {
       // Concatenate country code with the mobile number
-      String fullPhoneNumber =
-          '${selectedCountryCode.value}${mobileController.text.trim()}';
+      String fullPhoneNumber = '${selectedCountryCode.value}${mobileController.text.trim()}';
 
       // Register user in Firebase Auth
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
@@ -278,10 +276,7 @@ class RegistrationController extends GetxController {
       );
 
       // Store advocate details in Firestore
-      await _firestore
-          .collection('advocate')
-          .doc(userCredential.user!.uid)
-          .set({
+      await _firestore.collection('advocate').doc(userCredential.user!.uid).set({
         'advocate_id': advocate.advocateId,
         'email_address': advocate.emailAddress,
         'name': advocate.name,
@@ -317,4 +312,5 @@ class RegistrationController extends GetxController {
       );
     }
   }
+
 }
