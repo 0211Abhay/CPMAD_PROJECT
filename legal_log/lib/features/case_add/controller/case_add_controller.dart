@@ -269,6 +269,7 @@ List<String> validateAllFields() {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
+        
       } catch (error) {
         Get.snackbar(
           'Error',

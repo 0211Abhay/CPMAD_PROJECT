@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/features/authentication/controller/login_controller.dart';
 import 'package:legal_log/features/home_page/controller/home_screen_controller.dart';
 
 class CustomDrawer extends StatelessWidget {
   final HomeScreenController homeController = Get.find<HomeScreenController>();
   final LoginController logincontroller = Get.find<LoginController>();
+  final GetStorage storage = GetStorage();
   CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    String userName = storage.read('user')['name'];
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -30,8 +33,8 @@ class CustomDrawer extends StatelessWidget {
                   backgroundImage: AssetImage('assets/images/profile.jpg'),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'User Name',
+                Text(
+                  userName,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
