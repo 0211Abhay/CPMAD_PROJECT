@@ -59,26 +59,25 @@ class CustomDrawer extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(width: 8), // Space between icon and text
-                        Expanded(
-                          child: Text(
-                            homeController.location
-                                .value, // Dynamically updates the value
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(1, 1),
-                                  blurRadius: 3,
-                                  color: Colors.black45,
-                                ),
-                              ],
-                            ),
-                            overflow: TextOverflow
-                                .ellipsis, // Handle long text gracefully
-                          ),
-                        ),
+                        // const SizedBox(width: 8), // Space between icon and text
+                        // Expanded(
+                        //   child: Text(
+                        //     "Static Location", // Dynamically updates the value
+                        //     style: const TextStyle(
+                        //       color: Colors.white,
+                        //       fontSize: 18,
+                        //       shadows: [
+                        //         Shadow(
+                        //           offset: Offset(1, 1),
+                        //           blurRadius: 3,
+                        //           color: Colors.black45,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     overflow: TextOverflow
+                        //         .ellipsis, // Handle long text gracefully
+                        //   ),
+                        // ),
                       ],
                     )),
               ],

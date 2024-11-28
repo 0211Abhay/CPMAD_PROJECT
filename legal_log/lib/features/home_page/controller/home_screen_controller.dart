@@ -11,5 +11,5 @@ class HomeScreenController extends GetxController {
     [Icons.person, "Client"],
   ];
 
-  var location = ''.obs; // Observable string for location
+  // var location = ''.obs; // Observable string for location
 }
