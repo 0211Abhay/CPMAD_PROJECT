@@ -54,20 +54,22 @@ dependencies:
   mailer: ^6.2.0
   get_storage: ^2.1.1
   icons_launcher: ^3.0.0
+  google_sign_in: ^6.2.2
+  flutter_secure_storage: ^4.2.1
+  file_picker: ^8.1.4
+  googleapis_auth: ^1.6.0
+  googleapis: ^13.2.0
+  extension_google_sign_in_as_googleapis_auth: ^2.0.12
   animated_bottom_navigation_bar: ^1.3.3
   syncfusion_flutter_calendar: ^27.2.4
-  # flutter_launcher_icons: ^0.14.1
+
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   
-# flutter_launcher_icons:
-#   android: "launcher_icon"
-#   ios: true
-#   image_path: "assets/images/balance.png"
-#   adaptive_icon_background: '#ffffff'
-#   remove_alpha_ios: true
+
 
 icons_launcher:
   image_path: "assets/images/balance.png"
