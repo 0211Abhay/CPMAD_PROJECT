@@ -13,6 +13,15 @@ class CaseRegistrationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Get.toNamed("/home_page");
+            },
+            icon: Icon(Icons.arrow_back)
+            ),
+        title: Text('Case Registration'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(

@@ -13,6 +13,14 @@ class ClientRegistrationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Get.toNamed("/home_page");
+            },
+            icon: Icon(Icons.arrow_back)),
+        title: Text('Client Registration'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -47,23 +55,31 @@ class ClientRegistrationScreen extends StatelessWidget {
                   const SizedBox(height: 10),
               
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         flex: 2,
-                        child: CountryCodePicker(
-                          onChanged: (CountryCode code) {
-                            controller.updateCountryCode(code);
-                          },
-                          initialSelection: 'IN', // Default to India
-                          favorite: ['+91', 'IN'], // Show India as a favorite
-                          showFlag: true,
-                          showFlagDialog: true,
-                          showCountryOnly: false,
-                          showOnlyCountryWhenClosed: false,
-                          alignLeft: false,
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: CountryCodePicker(
+                            onChanged: (CountryCode code) {
+                              controller.updateCountryCode(code);
+                            },
+                            initialSelection: 'IN', // Default to India
+                            favorite: ['+91', 'IN'], // Show India as a favorite
+                            // showFlag: true,
+                            // showFlagDialog: true,
+                            // showCountryOnly: false,
+                            // showOnlyCountryWhenClosed: false,
+                            // alignLeft: false,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       Expanded(
                         flex: 5,
                         child: CustomTextField(

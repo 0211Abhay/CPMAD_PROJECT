@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/src/widgets/editable_text.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:legal_log/features/home_page/controller/home_screen_controller.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
@@ -14,9 +16,12 @@ class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GetStorage _storage = GetStorage();
+  final homepagecontroller = Get.put(HomeScreenController());
 
-  final String senderEmail = 'aryan.langhanoja119561@marwadiuniversity.ac.in'; // Replace with your email
-  final String senderPassword = 'dvvm xula uqrn nolx';    // Replace with your app password
+  final String senderEmail =
+      'aryan.langhanoja119561@marwadiuniversity.ac.in'; // Replace with your email
+  final String senderPassword =
+      'dvvm xula uqrn nolx'; // Replace with your app password
 
   // Toggle password visibility
   void togglePasswordVisibility() {
@@ -49,7 +54,8 @@ class LoginController extends GetxController {
   // Fetch IP address
   Future<String> getIpAddress() async {
     try {
-      final response = await http.get(Uri.parse('https://api.ipify.org?format=json'));
+      final response =
+          await http.get(Uri.parse('https://api.ipify.org?format=json'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return data['ip'];
@@ -63,7 +69,8 @@ class LoginController extends GetxController {
   // Fetch location from IP
   Future<String> getLocationFromIp(String ipAddress) async {
     try {
-      final response = await http.get(Uri.parse('http://ip-api.com/json/$ipAddress'));
+      final response =
+          await http.get(Uri.parse('http://ip-api.com/json/$ipAddress'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final city = data['city'] ?? 'Unknown city';
@@ -115,7 +122,8 @@ class LoginController extends GetxController {
   }
 
   // Send login notification email
-  Future<void> sendLoginNotification(String email, String ipAddress, String location) async {
+  Future<void> sendLoginNotification(
+      String email, String ipAddress, String location) async {
     final smtpServer = gmail(senderEmail, senderPassword);
     final message = Message()
       ..from = Address(senderEmail, 'Legal Log')
@@ -135,6 +143,8 @@ class LoginController extends GetxController {
         Legal Log Team
       ''';
 
+    // homepagecontroller.location = location as RxString;
+
     try {
       await send(message, smtpServer);
       print('Login notification email sent.');
@@ -145,51 +155,50 @@ class LoginController extends GetxController {
 
   // Login user
   Future<void> loginUser(String email, String password) async {
-  try {
-    // ignore: unused_local_variable
-    UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      // ignore: unused_local_variable
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    // Fetch user data from Firestore
-    QuerySnapshot querySnapshot = await _firestore
-        .collection('advocate')
-        .where('email_address', isEqualTo: email)
-        .get();
+      // Fetch user data from Firestore
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('advocate')
+          .where('email_address', isEqualTo: email)
+          .get();
 
-    if (querySnapshot.docs.isNotEmpty) {
-      var userData = querySnapshot.docs.first.data();
-      _storage.write('user', userData); // Store user data locally
+      if (querySnapshot.docs.isNotEmpty) {
+        var userData = querySnapshot.docs.first.data();
+        _storage.write('user', userData); // Store user data locally
 
-      // Fetch IP and location
-      final ipAddress = await getIpAddress();
-      final locationFromIp = await getLocationFromIp(ipAddress);
+        // Fetch IP and location
+        final ipAddress = await getIpAddress();
+        final locationFromIp = await getLocationFromIp(ipAddress);
 
-      // Fetch precise location
-      final preciseLocation = await getPreciseLocation();
+        // Fetch precise location
+        final preciseLocation = await getPreciseLocation();
 
-      // Choose the most detailed location
-      final location = preciseLocation != 'Permission denied'
-          ? preciseLocation
-          : locationFromIp;
+        // Choose the most detailed location
+        final location = preciseLocation != 'Permission denied'
+            ? preciseLocation
+            : locationFromIp;
 
-      // Send login notification
-      await sendLoginNotification(email, ipAddress, location);
+        // Send login notification
+        await sendLoginNotification(email, ipAddress, location);
 
-      // Dismiss loader and navigate to home page
+        // Dismiss loader and navigate to home page
+        Get.back(); // Close the loader dialog
+        Get.toNamed('/home_page');
+      } else {
+        Get.back(); // Close the loader dialog
+        Get.snackbar('Error', 'User data not found in Firestore');
+      }
+    } catch (e) {
       Get.back(); // Close the loader dialog
-      Get.toNamed('/home_page');
-    } else {
-      Get.back(); // Close the loader dialog
-      Get.snackbar('Error', 'User data not found in Firestore');
+      Get.snackbar('Login Error', e.toString());
     }
-  } catch (e) {
-    Get.back(); // Close the loader dialog
-    Get.snackbar('Login Error', e.toString());
   }
-}
-
 
   // Logout user
   Future<void> logout() async {
