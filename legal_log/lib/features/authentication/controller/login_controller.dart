@@ -143,7 +143,7 @@ class LoginController extends GetxController {
         Legal Log Team
       ''';
 
-    homepagecontroller.location = location as RxString;
+    // homepagecontroller.location = location as RxString;
 
     try {
       await send(message, smtpServer);
