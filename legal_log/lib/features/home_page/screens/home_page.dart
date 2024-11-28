@@ -33,15 +33,6 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Legal Log'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Call the logout function when the button is pressed
-              loginController.logout();
-            },
-          ),
-        ],
       ),
       drawer: CustomDrawer(), // Use the new CustomDrawer widget here
       body: Obx(
