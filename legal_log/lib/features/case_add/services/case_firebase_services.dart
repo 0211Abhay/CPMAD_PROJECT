@@ -22,6 +22,15 @@ class CaseFirebaseServices {
     return collectionStream;
   }
 
+  Stream<QuerySnapshot> fetchLegalCasesByID(String userId) {
+    print("userId = " + userId);
+    Stream<QuerySnapshot> collectionStream = FirebaseFirestore.instance
+        .collection('case')
+        .where(userId, isEqualTo: 'advocate_id')
+        .snapshots();
+    return collectionStream;
+  }
+
   // Update a legal case
   updateCase(Case legalCase, String? documentId) {
     return db

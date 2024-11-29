@@ -1,11 +1,15 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/features/case_add/model/case.dart';
 import 'package:legal_log/features/case_add/services/case_firebase_services.dart';
 
 /// Controller for managing case registration logic and form validation.
 class CaseAddController extends GetxController {
+  final GetStorage storage = GetStorage();
   final formKey = GlobalKey<FormState>();
+  late String user_id;
+
   // Observable variables for the form fields
   final fileNo = ''.obs;
   final caseNo = ''.obs;
@@ -44,6 +48,9 @@ class CaseAddController extends GetxController {
   void onInit() {
     super.onInit();
 
+    // Initialize userName from storage after object initialization
+    user_id = storage.read('user')['advocate_id'] ?? 'Unknown User';
+
     // Initialize controllers and sync with observables
     fileNoController = TextEditingController(text: fileNo.value);
     caseNoController = TextEditingController(text: caseNo.value);
@@ -72,16 +79,19 @@ class CaseAddController extends GetxController {
     // Add listeners to update Rx variables
     fileNoController.addListener(() => fileNo.value = fileNoController.text);
     caseNoController.addListener(() => caseNo.value = caseNoController.text);
-    applicantNameController.addListener(() => applicantName.value = applicantNameController.text);
-    opponentNameController.addListener(() => opponentName.value = opponentNameController.text);
-    ourClientController.addListener(() => ourClient.value = ourClientController.text);
+    applicantNameController
+        .addListener(() => applicantName.value = applicantNameController.text);
+    opponentNameController
+        .addListener(() => opponentName.value = opponentNameController.text);
+    ourClientController
+        .addListener(() => ourClient.value = ourClientController.text);
     areaController.addListener(() => area.value = areaController.text);
     courtController.addListener(() => court.value = courtController.text);
     judgeController.addListener(() => judge.value = judgeController.text);
-    dateOfFilingController.addListener(() => dateOfFiling.value = dateOfFilingController.text);
+    dateOfFilingController
+        .addListener(() => dateOfFiling.value = dateOfFilingController.text);
     stageController.addListener(() => stage.value = stageController.text);
     noteController.addListener(() => note.value = noteController.text);
-
   }
 
   @override
@@ -102,48 +112,17 @@ class CaseAddController extends GetxController {
   }
 
   // Validation methods
-  String? validateFileNo(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "File No cannot be empty.";
-    }
-    return null;
-  }
+  String? validateFileNo(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "File No cannot be empty." : null;
 
-  String? validateCaseNo(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Case No cannot be empty.";
-    }
-    return null;
-  }
+  String? validateCaseNo(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "Case No cannot be empty." : null;
 
   String? validateApplicantName(String? value) {
-    if (value == null || value.trim().isEmpty) {
+    if (value == null || value.trim().isEmpty)
       return "Applicant Name cannot be empty.";
-    }
-    if (value.trim().length < 3) {
+    if (value.trim().length < 3)
       return "Applicant Name must be at least 3 characters.";
-    }
-    return null;
-  }
-
-  String? validateOpponentName(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Opponent Name cannot be empty.";
-    }
-    return null;
-  }
-
-  String? validateOurClient(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Our Client cannot be empty.";
-    }
-    return null;
-  }
-
-  String? validateJudge(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Judge cannot be empty.";
-    }
     return null;
   }
 
@@ -154,60 +133,39 @@ class CaseAddController extends GetxController {
     return null;
   }
 
-  String? validateOpponentAdvocates(String? values) {
-    if (values == null || values.isEmpty) {
-      return "At least one Opponent Advocate is required.";
-    }
-    return null;
-  }
+  String? validateOpponentName(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "Opponent Name cannot be empty." : null;
+
+  String? validateOurClient(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "Our Client cannot be empty." : null;
+
+  String? validateJudge(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "Judge cannot be empty." : null;
 
   String? validateDateOfFiling(String? value) {
-    if (value == null || value.trim().isEmpty) {
+    if (value == null || value.trim().isEmpty)
       return "Date of Filing cannot be empty.";
-    }
     try {
-      // Attempt to parse the date in YYYY-MM-DD format
       DateTime.parse(value.trim());
-    } catch (e) {
+    } catch (_) {
       return "Enter a valid date in YYYY-MM-DD format.";
     }
     return null;
   }
 
-  String? validateStage(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Stage cannot be empty.";
-    }
-    return null;
-  }
+  String? validateStage(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "Stage cannot be empty." : null;
 
-  String? validateArea(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Area cannot be empty.";
-    }
-    return null;
-  }
+  String? validateArea(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "Area cannot be empty." : null;
 
-  String? validateCourt(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Court cannot be empty.";
-    }
-    return null;
-  }
+  String? validateCourt(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "Court cannot be empty." : null;
 
-  String? validateNote(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return "Note cannot be empty.";
-    }
-    return null;
-  }
+  String? validateNote(String? value) =>
+      (value?.trim().isEmpty ?? true) ? "Note cannot be empty." : null;
 
-  // (Other validation methods here, as already written in your code...)
-
-List<String> validateAllFields() {
-    List<String> errors = [];
-
-    // List of validation functions
+  List<String> validateAllFields() {
     final validations = [
       validateFileNo(fileNo.value),
       validateCaseNo(caseNo.value),
@@ -220,17 +178,8 @@ List<String> validateAllFields() {
       validateCourt(court.value),
       validateNote(note.value),
     ];
-
-    // Iterate through the list of validation results and add any non-null errors
-    for (var error in validations) {
-      if (error != null) {
-        errors.add(error);
-      }
-    }
-
-    return errors;
+    return validations.where((error) => error != null).cast<String>().toList();
   }
-
 
   // Registration Logic
   Future<void> registerCase() async {
@@ -243,6 +192,7 @@ List<String> validateAllFields() {
             DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
 
         final caseData = Case(
+          advocate_id: user_id, // Provide the appropriate advocate ID here
           fileNo: fileNo.value,
           caseNo: caseNo.value,
           applicantName: applicantName.value,
@@ -269,8 +219,7 @@ List<String> validateAllFields() {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        
-      } catch (error) {
+      } catch (_) {
         Get.snackbar(
           'Error',
           'Failed to register case. Please try again.',
