@@ -18,11 +18,12 @@ class _CaseListScreenState extends State<CaseListScreen> {
   final CaseFirebaseServices _caseFirebaseServices = CaseFirebaseServices();
   final CaseAddController controller = Get.put(CaseAddController());
   late String user_id; // Declare without initialization
-
+  GetStorage storage = GetStorage();
   @override
   void initState() {
     super.initState();
-    user_id = controller.user_id; // Initialize in initState
+    user_id = storage.read('user')['advocate_id'];
+    ; // Initialize in initState
   }
 
   @override
@@ -32,21 +33,25 @@ class _CaseListScreenState extends State<CaseListScreen> {
         stream: _caseFirebaseServices.fetchLegalCasesByID(user_id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
+            print("ConnectionState: Waiting");
             return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
+            print("Error: ${snapshot.error}");
             return const Center(child: Text("Error fetching cases"));
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            print("No cases found for userId");
             return const Center(child: Text("No cases found"));
           }
 
-          // Retrieve cases from snapshot
           final cases = snapshot.data!.docs.map((doc) {
             final data = doc.data() as Map<String, dynamic>;
-            return Case.fromJson(data); // Convert JSON to Case model
+            print("Document: ${data}");
+            return Case.fromJson(
+                data); // Ensure your model conversion is correct
           }).toList();
 
           return ListView.builder(
@@ -67,7 +72,6 @@ class _CaseListScreenState extends State<CaseListScreen> {
     );
   }
 }
-
 
 class CaseCard extends StatelessWidget {
   final Case legalCase;

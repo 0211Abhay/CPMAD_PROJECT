@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/common_widgets/custom_text_fields.dart';
 import 'package:legal_log/features/case_add/controller/case_add_controller.dart';
 
 class CaseRegistrationScreen extends StatelessWidget {
   final CaseAddController controller = Get.put(CaseAddController());
   // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  GetStorage storage = GetStorage();
 
   CaseRegistrationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    String userId = storage.read('user')['advocate_id'];
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -18,8 +21,7 @@ class CaseRegistrationScreen extends StatelessWidget {
             onPressed: () {
               Get.toNamed("/home_page");
             },
-            icon: Icon(Icons.arrow_back)
-            ),
+            icon: Icon(Icons.arrow_back)),
         title: Text('Case Registration'),
       ),
       body: Padding(
@@ -181,6 +183,8 @@ class CaseRegistrationScreen extends StatelessWidget {
                             false) {
                           // If valid, submit the case
                           controller.registerCase();
+                          // controller.onClose();
+                          // Get.offNamed('/home_page');
                         }
                       },
                       style: ElevatedButton.styleFrom(
