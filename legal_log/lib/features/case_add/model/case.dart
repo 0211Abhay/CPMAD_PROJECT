@@ -1,5 +1,6 @@
 class Case {
   // Properties
+  final String advocate_id;
   final String? case_id;
   final String? fileNo;
   final String? caseNo;
@@ -19,6 +20,7 @@ class Case {
 
   // Constructor with required fields
   Case({
+    this.advocate_id = '',
     this.case_id,
     required this.fileNo,
     required this.caseNo,
@@ -40,6 +42,7 @@ class Case {
   // Convert the object to JSON
   Map<String, dynamic> toJson() {
     return {
+      'advocate_id' : advocate_id,
       'File_No': fileNo,
       'Case_No': caseNo,
       'Applicant_Name': applicantName,
@@ -67,6 +70,8 @@ class Case {
     final dateOnly = DateTime(dateTime.year, dateTime.month, dateTime.day);
 
     return Case(
+      advocate_id: json['advocate_id'] as String,
+      case_id: json['Case_No'] as String, // Assuming 'Case_No' is the primary key
       fileNo: json['File_No'] as String,
       caseNo: json['Case_No'] as String,
       applicantName: json['Applicant_Name'] as String,

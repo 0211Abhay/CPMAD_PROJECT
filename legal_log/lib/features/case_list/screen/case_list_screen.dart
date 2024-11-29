@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:legal_log/features/case_add/controller/case_add_controller.dart';
 import 'package:legal_log/features/case_add/model/case.dart'; // Adjust import path as needed
 import 'package:legal_log/features/case_add/services/case_firebase_services.dart'; // Adjust import path as needed
 
@@ -12,12 +16,20 @@ class CaseListScreen extends StatefulWidget {
 
 class _CaseListScreenState extends State<CaseListScreen> {
   final CaseFirebaseServices _caseFirebaseServices = CaseFirebaseServices();
+  final CaseAddController controller = Get.put(CaseAddController());
+  late String user_id; // Declare without initialization
+
+  @override
+  void initState() {
+    super.initState();
+    user_id = controller.user_id; // Initialize in initState
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: _caseFirebaseServices.fetchLegalCases(),
+        stream: _caseFirebaseServices.fetchLegalCasesByID(user_id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -43,10 +55,10 @@ class _CaseListScreenState extends State<CaseListScreen> {
               final legalCase = cases[index];
               return CaseCard(
                 legalCase: legalCase,
-                onUpdate: () => _caseFirebaseServices
-                    .updateCase(legalCase , legalCase.case_id), // Pass the update method
-                onDelete: () => _caseFirebaseServices
-                    .deleteLegalCase(legalCase.case_id), // Pass the delete method
+                onUpdate: () => _caseFirebaseServices.updateCase(
+                    legalCase, legalCase.case_id), // Pass the update method
+                onDelete: () => _caseFirebaseServices.deleteLegalCase(
+                    legalCase.case_id), // Pass the delete method
               );
             },
           );
@@ -55,6 +67,7 @@ class _CaseListScreenState extends State<CaseListScreen> {
     );
   }
 }
+
 
 class CaseCard extends StatelessWidget {
   final Case legalCase;
