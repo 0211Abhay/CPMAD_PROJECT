@@ -8,7 +8,7 @@ import 'package:legal_log/features/case_add/services/case_firebase_services.dart
 class CaseAddController extends GetxController {
   final GetStorage storage = GetStorage();
   final formKey = GlobalKey<FormState>();
-  late String user_id;
+ 
 
   // Observable variables for the form fields
   final fileNo = ''.obs;
@@ -49,7 +49,7 @@ class CaseAddController extends GetxController {
     super.onInit();
 
     // Initialize userName from storage after object initialization
-    user_id = storage.read('user')['advocate_id'] ?? 'Unknown User';
+
 
     // Initialize controllers and sync with observables
     fileNoController = TextEditingController(text: fileNo.value);
@@ -192,7 +192,8 @@ class CaseAddController extends GetxController {
             DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
 
         final caseData = Case(
-          advocate_id: user_id, // Provide the appropriate advocate ID here
+          advocate_id: storage.read('user')[
+              'advocate_id'], // Provide the appropriate advocate ID here
           fileNo: fileNo.value,
           caseNo: caseNo.value,
           applicantName: applicantName.value,
@@ -209,7 +210,6 @@ class CaseAddController extends GetxController {
           stage: stage.value,
           note: note.value,
         );
-
         await CaseFirebaseServices().addCase(caseData);
 
         Get.snackbar(

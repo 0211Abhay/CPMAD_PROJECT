@@ -20,7 +20,7 @@ class Case {
 
   // Constructor with required fields
   Case({
-    this.advocate_id = '',
+    required this.advocate_id,
     this.case_id,
     required this.fileNo,
     required this.caseNo,

@@ -26,7 +26,7 @@ class CaseFirebaseServices {
     print("userId = " + userId);
     Stream<QuerySnapshot> collectionStream = FirebaseFirestore.instance
         .collection('case')
-        .where(userId, isEqualTo: 'advocate_id')
+        .where('advocate_id' , isEqualTo: userId)
         .snapshots();
     return collectionStream;
   }
