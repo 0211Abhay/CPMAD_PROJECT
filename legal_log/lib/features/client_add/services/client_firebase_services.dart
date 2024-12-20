@@ -19,6 +19,13 @@ class ClientFirebaseServices {
     return db.collection('client').snapshots();
   }
 
+  Stream<QuerySnapshot> fetchClientsByID(String user_id) {
+    return db
+        .collection('client')
+        .where('advocate_id', isEqualTo: user_id)
+        .snapshots();
+  }
+
   // Update a client
   updateClient(Client client, String? documentId) {
     return db

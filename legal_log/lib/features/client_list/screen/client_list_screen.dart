@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:legal_log/features/client_add/controller/client_add_controller.dart';
 import 'package:legal_log/features/client_add/model/client.dart';
 import 'package:legal_log/features/client_add/services/client_firebase_services.dart';
 
@@ -15,11 +17,20 @@ class _ClientListScreenState extends State<ClientListScreen> {
   final ClientFirebaseServices _clientFirebaseServices =
       ClientFirebaseServices();
 
+  final ClientAddController controller = Get.put(ClientAddController());
+  late String user_id; // Declare without initialization
+  GetStorage storage = GetStorage();
+  @override
+  void initState() {
+    super.initState();
+    user_id = storage.read('user')['advocate_id'];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: _clientFirebaseServices.fetchClients(),
+        stream: _clientFirebaseServices.fetchClientsByID(user_id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -44,59 +55,60 @@ class _ClientListScreenState extends State<ClientListScreen> {
             itemBuilder: (context, index) {
               final client = clients[index];
               return Dismissible(
-  key: ValueKey(client.docId), // Use the docId as the key
-  background: Container(
-    color: Colors.green,
-    alignment: Alignment.centerLeft,
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: const Icon(Icons.edit, color: Colors.white),
-  ),
-  secondaryBackground: Container(
-    color: Colors.red,
-    alignment: Alignment.centerRight,
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: const Icon(Icons.delete, color: Colors.white),
-  ),
-  confirmDismiss: (direction) async {
-    if (direction == DismissDirection.endToStart) {
-      // Confirmation for delete action
-      final shouldDelete = await _showConfirmationDialog(context, "Delete");
-      if (shouldDelete ?? false) {
-        // Proceed with deletion
-        _clientFirebaseServices.deleteClient(client.docId);
-        return true;
-      }
-      // Cancel the dismissal
-      return false;
-    } else if (direction == DismissDirection.startToEnd) {
-      // Confirmation for update action
-      final shouldUpdate = await _showConfirmationDialog(context, "Update");
-      if (shouldUpdate ?? false) {
-        // Navigate to update screen
-        Get.toNamed('/client_update', arguments: {
-          'client': client,
-          'documentId': client.docId,
-        });
-      }
-      // Cancel the dismissal
-      return false;
-    }
-    return false; // Default case: no dismissal
-  },
-  onDismissed: (direction) {
-    if (direction == DismissDirection.endToStart) {
-      // This block will execute only after confirmDismiss returns true
-      setState(() {
-         // Remove the client from the local list
-      });
-    }
-  },
-  child: ClientCard(
-    client: client,
-    width: MediaQuery.of(context).size.width,
-  ),
-);
-
+                key: ValueKey(client.docId), // Use the docId as the key
+                background: Container(
+                  color: Colors.green,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const Icon(Icons.edit, color: Colors.white),
+                ),
+                secondaryBackground: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                confirmDismiss: (direction) async {
+                  if (direction == DismissDirection.endToStart) {
+                    // Confirmation for delete action
+                    final shouldDelete =
+                        await _showConfirmationDialog(context, "Delete");
+                    if (shouldDelete ?? false) {
+                      // Proceed with deletion
+                      _clientFirebaseServices.deleteClient(client.docId);
+                      return true;
+                    }
+                    // Cancel the dismissal
+                    return false;
+                  } else if (direction == DismissDirection.startToEnd) {
+                    // Confirmation for update action
+                    final shouldUpdate =
+                        await _showConfirmationDialog(context, "Update");
+                    if (shouldUpdate ?? false) {
+                      // Navigate to update screen
+                      Get.toNamed('/client_update', arguments: {
+                        'client': client,
+                        'documentId': client.docId,
+                      });
+                    }
+                    // Cancel the dismissal
+                    return false;
+                  }
+                  return false; // Default case: no dismissal
+                },
+                onDismissed: (direction) {
+                  if (direction == DismissDirection.endToStart) {
+                    // This block will execute only after confirmDismiss returns true
+                    setState(() {
+                      // Remove the client from the local list
+                    });
+                  }
+                },
+                child: ClientCard(
+                  client: client,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              );
             },
           );
         },

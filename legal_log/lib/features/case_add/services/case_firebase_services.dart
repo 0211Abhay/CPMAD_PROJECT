@@ -18,7 +18,7 @@ class CaseFirebaseServices {
   // Read - Fetch all legal cases
   Stream<QuerySnapshot> fetchLegalCases() {
     Stream<QuerySnapshot> collectionStream =
-        FirebaseFirestore.instance.collection('case').snapshots();
+        db.collection('case').snapshots();
     return collectionStream;
   }
 
