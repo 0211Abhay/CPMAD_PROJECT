@@ -58,12 +58,56 @@ class _CaseListScreenState extends State<CaseListScreen> {
             itemCount: cases.length,
             itemBuilder: (context, index) {
               final legalCase = cases[index];
-              return CaseCard(
-                legalCase: legalCase,
-                onUpdate: () => _caseFirebaseServices.updateCase(
-                    legalCase, legalCase.case_id), // Pass the update method
-                onDelete: () => _caseFirebaseServices.deleteLegalCase(
-                    legalCase.case_id), // Pass the delete method
+              return Dismissible(
+                key: ValueKey(legalCase.docId),
+                background: Container(
+                  color: Colors.green,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const Icon(Icons.edit, color: Colors.white),
+                ),
+                secondaryBackground: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                confirmDismiss: (direction) async {
+                  if (direction == DismissDirection.endToStart) {
+                    final shouldDelete =
+                        await _showConfirmationDialog(context, "Delete");
+                    if (shouldDelete ?? false) {
+                      _caseFirebaseServices.deleteLegalCase(legalCase.docId);
+                      return true;
+                    }
+                    return false;
+                  } else if (direction == DismissDirection.startToEnd) {
+                    final shouldUpdate =
+                        await _showConfirmationDialog(context, "Update");
+                    if (shouldUpdate ?? false) {
+                      Get.toNamed('/case_update', arguments: {
+                        'case': legalCase,
+                        'documentId': legalCase.docId,
+                      });
+                    }
+                    return false;
+                  }
+                  return false;
+                },
+                onDismissed: (direction) {
+                  if (direction == DismissDirection.endToStart) {
+                    // This block will execute only after confirmDismiss returns true
+                    setState(() {
+                      // Remove the client from the local list
+                    });
+                  }
+                },
+                child: CaseCard(
+                  legalCase: legalCase,
+                  width: MediaQuery.of(context).size.width,
+                  onUpdate: () => _handleUpdate(legalCase),
+                  onDelete: () => _handleDelete(legalCase),
+                ),
               );
             },
           );
@@ -71,65 +115,89 @@ class _CaseListScreenState extends State<CaseListScreen> {
       ),
     );
   }
+
+  Future<bool?> _showConfirmationDialog(BuildContext context, String action) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('$action Case'),
+        content: Text('Are you sure you want to $action this Case ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleUpdate(Case legalCase) {
+    Get.toNamed('/case_update', arguments: {
+      'case': legalCase,
+      'documentId': legalCase.docId,
+    });
+  }
+
+  void _handleDelete(Case legalCase) async {
+    final shouldDelete = await _showConfirmationDialog(context, "Delete");
+    if (shouldDelete ?? false) {
+      _caseFirebaseServices.deleteLegalCase(legalCase.docId);
+    }
+  }
 }
 
 class CaseCard extends StatelessWidget {
   final Case legalCase;
-  final VoidCallback onUpdate; // Update method callback
-  final VoidCallback onDelete; // Delete method callback
+  final double width;
+  final VoidCallback onUpdate;
+  final VoidCallback onDelete;
 
-  const CaseCard(
-      {super.key,
-      required this.legalCase,
-      required this.onUpdate,
-      required this.onDelete});
+  const CaseCard({
+    super.key,
+    required this.legalCase,
+    required this.width,
+    required this.onUpdate,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      elevation: 4.0,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Case No: ${legalCase.caseNo ?? "N/A"}",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text("File No: ${legalCase.fileNo ?? "N/A"}"),
-            Text("Applicant: ${legalCase.applicantName ?? "N/A"}"),
-            Text("Opponent: ${legalCase.opponentName ?? "N/A"}"),
-            Text("Court: ${legalCase.court ?? "N/A"}"),
-            Text("Stage: ${legalCase.stage ?? "N/A"}"),
-            const SizedBox(height: 8),
-            Text(
-              "Date of Filing: ${legalCase.dateOfFiling.toLocal().toString().split(' ')[0]}",
-              style: const TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            Text("Note: ${legalCase.note ?? "N/A"}"),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  color: Colors.green,
-                  onPressed: onUpdate, // Trigger update when pressed
-                  tooltip: 'Update Case',
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  color: Colors.red,
-                  onPressed: onDelete, // Trigger delete when pressed
-                  tooltip: 'Delete Case',
-                ),
-              ],
-            ),
-          ],
+    return Container(
+      width: width,
+      child: Card(
+        margin: const EdgeInsets.all(8.0),
+        elevation: 4.0,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                "Case No: ${legalCase.caseNo ?? "N/A"}",
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text("File No: ${legalCase.fileNo ?? "N/A"}"),
+              Text("Applicant: ${legalCase.applicantName ?? "N/A"}"),
+              Text("Opponent: ${legalCase.opponentName ?? "N/A"}"),
+              Text("Court: ${legalCase.court ?? "N/A"}"),
+              Text("Stage: ${legalCase.stage ?? "N/A"}"),
+              const SizedBox(height: 8),
+              Text(
+                "Date of Filing: ${legalCase.dateOfFiling.toLocal().toString().split(' ')[0]}",
+                style: const TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 8),
+              Text("Note: ${legalCase.note ?? "N/A"}"),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );

@@ -5,12 +5,12 @@ import 'package:legal_log/common_widgets/custom_text_fields.dart';
 import 'package:legal_log/features/case_add/controller/case_add_controller.dart';
 
 // ignore: must_be_immutable
-class CaseRegistrationScreen extends StatelessWidget {
+class CaseUpdateScreen extends StatelessWidget {
   final CaseAddController controller = Get.put(CaseAddController());
   // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GetStorage storage = GetStorage();
 
-  CaseRegistrationScreen({super.key});
+  CaseUpdateScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
