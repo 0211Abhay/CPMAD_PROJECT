@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:legal_log/common_widgets/custom_text_fields.dart';
+import 'package:legal_log/common_widgets/show_loader.dart';
 import 'package:lottie/lottie.dart';
 import '../controller/registration_controller.dart';
 
@@ -147,6 +148,10 @@ class RegistrationScreen extends StatelessWidget {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           if (controller.agreetoTermss()) {
+                            showLottieDialog(
+                              animationPath: 'assets/lottie/Loading.json', // Path to your Lottie loader animation
+                              message: 'Sending OTP, please wait...',
+                            );
                             await controller.sendOtpIfVerified();
                           } else {
                             Get.snackbar(

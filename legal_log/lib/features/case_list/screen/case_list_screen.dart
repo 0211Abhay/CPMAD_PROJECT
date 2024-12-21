@@ -5,7 +5,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/features/case_add/controller/case_add_controller.dart';
 import 'package:legal_log/features/case_add/model/case.dart'; // Adjust import path as needed
-import 'package:legal_log/features/case_add/services/case_firebase_services.dart'; // Adjust import path as needed
+import 'package:legal_log/features/case_add/services/case_firebase_services.dart';
+import 'package:legal_log/features/case_list/case_details.dart'; // Adjust import path as needed
 
 class CaseListScreen extends StatefulWidget {
   const CaseListScreen({super.key});
@@ -167,36 +168,44 @@ class CaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      child: Card(
-        margin: const EdgeInsets.all(8.0),
-        elevation: 4.0,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                "Case No: ${legalCase.caseNo ?? "N/A"}",
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text("File No: ${legalCase.fileNo ?? "N/A"}"),
-              Text("Applicant: ${legalCase.applicantName ?? "N/A"}"),
-              Text("Opponent: ${legalCase.opponentName ?? "N/A"}"),
-              Text("Court: ${legalCase.court ?? "N/A"}"),
-              Text("Stage: ${legalCase.stage ?? "N/A"}"),
-              const SizedBox(height: 8),
-              Text(
-                "Date of Filing: ${legalCase.dateOfFiling.toLocal().toString().split(' ')[0]}",
-                style: const TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 8),
-              Text("Note: ${legalCase.note ?? "N/A"}"),
-              const SizedBox(height: 16),
-            ],
+    return GestureDetector(
+      onTap: () {
+        Get.to(
+          () => CaseDetailScreen(),
+          arguments: legalCase, // Pass the case data to the details screen
+        );
+      },
+      child: Container(
+        width: width,
+        child: Card(
+          margin: const EdgeInsets.all(8.0),
+          elevation: 4.0,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  "Case No: ${legalCase.caseNo ?? "N/A"}",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text("File No: ${legalCase.fileNo ?? "N/A"}"),
+                Text("Applicant: ${legalCase.applicantName ?? "N/A"}"),
+                Text("Opponent: ${legalCase.opponentName ?? "N/A"}"),
+                Text("Court: ${legalCase.court ?? "N/A"}"),
+                Text("Stage: ${legalCase.stage ?? "N/A"}"),
+                const SizedBox(height: 8),
+                Text(
+                  "Date of Filing: ${legalCase.dateOfFiling.toLocal().toString().split(' ')[0]}",
+                  style: const TextStyle(color: Colors.grey),
+                ),
+                const SizedBox(height: 8),
+                Text("Note: ${legalCase.note ?? "N/A"}"),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
