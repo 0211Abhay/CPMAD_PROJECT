@@ -50,8 +50,8 @@ class _CaseListScreenState extends State<CaseListScreen> {
           final cases = snapshot.data!.docs.map((doc) {
             final data = doc.data() as Map<String, dynamic>;
             print("Document: ${data}");
-            return Case.fromJson(
-                data); // Ensure your model conversion is correct
+            return Case.fromJson(data)
+              ..docId = doc.id; // Ensure your model conversion is correct
           }).toList();
 
           return ListView.builder(

@@ -17,8 +17,7 @@ class CaseFirebaseServices {
 
   // Read - Fetch all legal cases
   Stream<QuerySnapshot> fetchLegalCases() {
-    Stream<QuerySnapshot> collectionStream =
-        db.collection('case').snapshots();
+    Stream<QuerySnapshot> collectionStream = db.collection('case').snapshots();
     return collectionStream;
   }
 
@@ -26,7 +25,7 @@ class CaseFirebaseServices {
     print("userId = " + userId);
     Stream<QuerySnapshot> collectionStream = FirebaseFirestore.instance
         .collection('case')
-        .where('advocate_id' , isEqualTo: userId)
+        .where('advocate_id', isEqualTo: userId)
         .snapshots();
     return collectionStream;
   }
@@ -39,7 +38,7 @@ class CaseFirebaseServices {
         .update(
             legalCase.toJson()) // Convert LegalCase object to JSON for updating
         // ignore: avoid_print
-        .then((value) => print("Legal case updated"))
+        .then((value) => print("Legal case updated ${documentId}"))
         // ignore: avoid_print
         .catchError((error) => print("Failed to update legal case: $error"));
   }

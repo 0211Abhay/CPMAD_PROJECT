@@ -2,28 +2,26 @@ class Case {
   // Properties
   final String advocate_id;
   String? docId; // Firestore document ID (hidden for internal use)
-  final String? case_id;
-  final String? fileNo;
-  final String? caseNo;
+  final String fileNo;
+  final String caseNo;
   final String? applicantName;
   final List<String?> otherApplicant;
-  final String? opponentName;
+  final String opponentName;
   final List<String?> otherOpponent;
-  final String? ourClient;
-  final String? area;
-  final String? court;
-  final String? judge;
-  final List<String?> ourAdvocates;
-  final List<String?> opponentAdvocates;
+  final String ourClient;
+  final String area;
+  final String court;
+  final String judge;
+  final List<String> ourAdvocates;
+  final List<String> opponentAdvocates;
   final DateTime dateOfFiling;
-  final String? stage;
+  final String stage;
   final String? note;
 
   // Constructor with required fields
   Case({
     required this.advocate_id,
     this.docId,
-    this.case_id,
     required this.fileNo,
     required this.caseNo,
     required this.applicantName,
@@ -73,9 +71,8 @@ class Case {
 
     return Case(
       advocate_id: json['advocate_id'] as String,
-      docId: json['docId'], // docId comes from Firestore (used internally)
-      case_id:
-          json['Case_No'] as String, // Assuming 'Case_No' is the primary key
+      docId: json[
+          'docId'], // docId comes from Firestore (used internally) // Assuming 'Case_No' is the primary key
       fileNo: json['File_No'] as String,
       caseNo: json['Case_No'] as String,
       applicantName: json['Applicant_Name'] as String,
