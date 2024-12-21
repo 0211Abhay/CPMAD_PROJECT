@@ -56,12 +56,13 @@ dependencies:
   icons_launcher: ^3.0.0
   google_sign_in: ^6.2.2
   flutter_secure_storage: ^4.2.1
-  file_picker: ^8.1.4
+  file_picker: ^8.1.6
   googleapis_auth: ^1.6.0
   googleapis: ^13.2.0
   extension_google_sign_in_as_googleapis_auth: ^2.0.12
   animated_bottom_navigation_bar: ^1.3.3
   syncfusion_flutter_calendar: ^27.2.4
+  firebase_storage: ^12.3.7
 
 
 
