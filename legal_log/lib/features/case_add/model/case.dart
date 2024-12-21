@@ -1,6 +1,7 @@
 class Case {
   // Properties
   final String advocate_id;
+  String? docId; // Firestore document ID (hidden for internal use)
   final String? case_id;
   final String? fileNo;
   final String? caseNo;
@@ -21,6 +22,7 @@ class Case {
   // Constructor with required fields
   Case({
     required this.advocate_id,
+    this.docId,
     this.case_id,
     required this.fileNo,
     required this.caseNo,
@@ -42,7 +44,7 @@ class Case {
   // Convert the object to JSON
   Map<String, dynamic> toJson() {
     return {
-      'advocate_id' : advocate_id,
+      'advocate_id': advocate_id,
       'File_No': fileNo,
       'Case_No': caseNo,
       'Applicant_Name': applicantName,
@@ -71,7 +73,9 @@ class Case {
 
     return Case(
       advocate_id: json['advocate_id'] as String,
-      case_id: json['Case_No'] as String, // Assuming 'Case_No' is the primary key
+      docId: json['docId'], // docId comes from Firestore (used internally)
+      case_id:
+          json['Case_No'] as String, // Assuming 'Case_No' is the primary key
       fileNo: json['File_No'] as String,
       caseNo: json['Case_No'] as String,
       applicantName: json['Applicant_Name'] as String,

@@ -1,5 +1,6 @@
 class Client {
   // Properties
+  final String advocate_id;
   String? docId;  // Firestore document ID (hidden for internal use)
   final String name;
   final String address;
@@ -10,6 +11,7 @@ class Client {
 
   // Constructor with required fields
   Client({
+    required this.advocate_id,
     this.docId,  // Document ID can be null as it's not passed in the constructor
     required this.name,
     required this.address,
@@ -22,6 +24,7 @@ class Client {
   // Convert the object to JSON for Firestore
   Map<String, dynamic> toJson() {
     return {
+      'advocate_id': advocate_id,
       'Name': name,
       'Address': address,
       'Phone_No': phoneNo,
@@ -34,6 +37,7 @@ class Client {
   // Create an object from Firestore JSON data
   factory Client.fromJson(Map<String, dynamic> json) {
     return Client(
+      advocate_id: json['advocate_id'] as String,
       docId: json['docId'],  // docId comes from Firestore (used internally)
       name: json['Name'] as String,
       address: json['Address'] as String,

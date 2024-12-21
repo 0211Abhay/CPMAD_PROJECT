@@ -1,11 +1,13 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/features/client_add/model/client.dart';
 import 'package:legal_log/features/client_add/services/client_firebase_services.dart';
 
 class ClientEditController extends GetxController {
   final formKey = GlobalKey<FormState>();
+    final GetStorage storage = GetStorage();
 
   // Document ID of the client being updated
   String? documentId;
@@ -127,6 +129,7 @@ class ClientEditController extends GetxController {
     if (formKey.currentState?.validate() ?? false) {
       try {
         final updatedClient = Client(
+          advocate_id: storage.read('user')['advocate_id'],
           name: name.value,
           address: address.value,
           phoneNo: phoneNo.value,
