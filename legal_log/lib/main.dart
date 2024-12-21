@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:legal_log/features/client_add/screen/client_edit.dart';
+import 'package:legal_log/features/drive_integration/drive.dart';
 import 'package:legal_log/features/settings/screens/setting_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         "/verify_otp": (context) => OtpVerificationScreen(),
         '/settings': (context) => SettingScreen(),
         '/client_update': (context) => ClientUpdateScreen(),
+        "/drive" : (context) => DriveScreen(),
         
       },
     );

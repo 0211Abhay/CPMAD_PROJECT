@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
         User? firebaseUser = _auth.currentUser;
         if (firebaseUser != null && firebaseUser.email == storedUser['email_address']) {
           // Valid session, navigate to home page
-          Get.offNamed('/home_page');
+          Get.offNamed('/login');
         } else {
           // Invalid session, clear storage and navigate to login
           _storage.erase();
