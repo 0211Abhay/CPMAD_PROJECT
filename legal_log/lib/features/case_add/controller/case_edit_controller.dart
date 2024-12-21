@@ -5,9 +5,12 @@ import 'package:legal_log/features/case_add/model/case.dart';
 import 'package:legal_log/features/case_add/services/case_firebase_services.dart';
 
 /// Controller for managing case registration logic and form validation.
-class CaseAddController extends GetxController {
+class CaseEditController extends GetxController {
   final GetStorage storage = GetStorage();
   final formKey = GlobalKey<FormState>();
+
+  // Document ID of the case being updated
+  String? documentId;
 
   // Observable variables for the form fields
   final fileNo = ''.obs;
@@ -43,6 +46,38 @@ class CaseAddController extends GetxController {
   late final TextEditingController stageController;
   late final TextEditingController noteController;
 
+  void setCaseData(Case legalCase, String? docId) {
+    documentId = docId;
+    fileNo.value = legalCase.fileNo;
+    caseNo.value = legalCase.caseNo;
+    applicantName.value = legalCase.applicantName!;
+    otherApplicant.value =
+        legalCase.otherApplicant.map((e) => e ?? '').toList();
+    opponentName.value = legalCase.opponentName;
+    otherOpponent.value = legalCase.otherOpponent.map((e) => e ?? '').toList();
+    ourClient.value = legalCase.ourClient;
+    area.value = legalCase.area;
+    court.value = legalCase.court;
+    judge.value = legalCase.judge;
+
+    fileNoController.text = legalCase.fileNo;
+    caseNoController.text = legalCase.caseNo;
+    applicantNameController.text = legalCase.applicantName!;
+    otherapplicantNameController.text = legalCase.otherApplicant.join(', ');
+    opponentNameController.text = legalCase.opponentName;
+    otheropponentNameController.text = legalCase.otherOpponent.join(', ');
+    ourClientController.text = legalCase.ourClient;
+    areaController.text = legalCase.area;
+    courtController.text = legalCase.court;
+    judgeController.text = legalCase.judge;
+    ourAdvocatesController.text = legalCase.ourAdvocates.join(', ');
+    opponentAdvocatesController.text = legalCase.opponentAdvocates.join(', ');
+    dateOfFilingController.text =
+        legalCase.dateOfFiling.toLocal().toString().split(' ')[0];
+    stageController.text = legalCase.stage;
+    noteController.text = legalCase.note!;
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -50,42 +85,42 @@ class CaseAddController extends GetxController {
     // Initialize userName from storage after object initialization
 
     // Initialize controllers and sync with observables
-    fileNoController = TextEditingController(text: fileNo.value);
-    caseNoController = TextEditingController(text: caseNo.value);
-    applicantNameController = TextEditingController(text: applicantName.value);
-    otherapplicantNameController = TextEditingController(
-      text: otherApplicant.isNotEmpty ? otherApplicant.join(', ') : '',
-    );
-    opponentNameController = TextEditingController(text: opponentName.value);
-    otheropponentNameController = TextEditingController(
-      text: otherOpponent.isNotEmpty ? otherOpponent.join(', ') : '',
-    );
-    ourClientController = TextEditingController(text: ourClient.value);
-    areaController = TextEditingController(text: area.value);
-    courtController = TextEditingController(text: court.value);
-    judgeController = TextEditingController(text: judge.value);
-    ourAdvocatesController = TextEditingController(
-      text: ourAdvocates.isNotEmpty ? ourAdvocates.join(', ') : '',
-    );
-    opponentAdvocatesController = TextEditingController(
-      text: opponentAdvocates.isNotEmpty ? opponentAdvocates.join(', ') : '',
-    );
-    dateOfFilingController = TextEditingController(text: dateOfFiling.value);
-    stageController = TextEditingController(text: stage.value);
-    noteController = TextEditingController(text: note.value);
+    fileNoController = TextEditingController();
+    caseNoController = TextEditingController();
+    applicantNameController = TextEditingController();
+    otherapplicantNameController = TextEditingController();
+    opponentNameController = TextEditingController();
+    otheropponentNameController = TextEditingController();
+    ourClientController = TextEditingController();
+    areaController = TextEditingController();
+    courtController = TextEditingController();
+    judgeController = TextEditingController();
+    ourAdvocatesController = TextEditingController();
+    opponentAdvocatesController = TextEditingController();
+    dateOfFilingController = TextEditingController();
+    stageController = TextEditingController();
+    noteController = TextEditingController();
 
     // Add listeners to update Rx variables
     fileNoController.addListener(() => fileNo.value = fileNoController.text);
     caseNoController.addListener(() => caseNo.value = caseNoController.text);
     applicantNameController
         .addListener(() => applicantName.value = applicantNameController.text);
+    otherapplicantNameController.addListener(() =>
+        otherApplicant.value = otherapplicantNameController.text.split(','));
     opponentNameController
         .addListener(() => opponentName.value = opponentNameController.text);
+    otheropponentNameController.addListener(() =>
+        otherOpponent.value = otheropponentNameController.text.split(','));
     ourClientController
         .addListener(() => ourClient.value = ourClientController.text);
     areaController.addListener(() => area.value = areaController.text);
     courtController.addListener(() => court.value = courtController.text);
     judgeController.addListener(() => judge.value = judgeController.text);
+    ourAdvocatesController.addListener(
+        () => ourAdvocates.value = ourAdvocatesController.text.split(','));
+    opponentAdvocatesController.addListener(() =>
+        opponentAdvocates.value = opponentAdvocatesController.text.split(','));
     dateOfFilingController
         .addListener(() => dateOfFiling.value = dateOfFilingController.text);
     stageController.addListener(() => stage.value = stageController.text);
@@ -98,11 +133,15 @@ class CaseAddController extends GetxController {
     fileNoController.dispose();
     caseNoController.dispose();
     applicantNameController.dispose();
+    otherapplicantNameController.dispose();
     opponentNameController.dispose();
+    otheropponentNameController.dispose();
     ourClientController.dispose();
     areaController.dispose();
     courtController.dispose();
     judgeController.dispose();
+    ourAdvocatesController.dispose();
+    opponentAdvocatesController.dispose();
     dateOfFilingController.dispose();
     stageController.dispose();
     noteController.dispose();
@@ -179,19 +218,11 @@ class CaseAddController extends GetxController {
     return validations.where((error) => error != null).cast<String>().toList();
   }
 
-  // Registration Logic
-  Future<void> registerCase() async {
-    final errors = validateAllFields();
-
-    if (errors.isEmpty) {
+  Future<void> updateCase(String documentId) async {
+    if (formKey.currentState?.validate() ?? false) {
       try {
-        final parsedDate = DateTime.parse(dateOfFiling.value.trim());
-        final dateOnly =
-            DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
-
-        final caseData = Case(
-          advocate_id: storage.read('user')[
-              'advocate_id'], // Provide the appropriate advocate ID here
+        final updatedCase = Case(
+          advocate_id: storage.read('user')['advocate_id'],
           fileNo: fileNo.value,
           caseNo: caseNo.value,
           applicantName: applicantName.value,
@@ -204,36 +235,31 @@ class CaseAddController extends GetxController {
           judge: judge.value,
           ourAdvocates: ourAdvocates.toList(),
           opponentAdvocates: opponentAdvocates.toList(),
-          dateOfFiling: dateOnly,
+          dateOfFiling: DateTime.parse(dateOfFiling.value),
           stage: stage.value,
           note: note.value,
         );
-        await CaseFirebaseServices().addCase(caseData);
+
+        await CaseFirebaseServices().updateCase(updatedCase, documentId);
 
         Get.snackbar(
           'Success',
-          'Case Registered Successfully',
+          'Case updated successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-      } catch (_) {
+
+        Get.toNamed("/home_page");
+      } catch (e) {
         Get.snackbar(
           'Error',
-          'Failed to register case. Please try again.',
+          'An error occurred while updating Case: $e',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
       }
-    } else {
-      Get.snackbar(
-        'Error',
-        errors.join("\n"),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
     }
   }
 }

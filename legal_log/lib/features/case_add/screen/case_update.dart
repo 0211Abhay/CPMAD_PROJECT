@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/common_widgets/custom_text_fields.dart';
-import 'package:legal_log/features/case_add/controller/case_add_controller.dart';
+import 'package:legal_log/features/case_add/controller/case_edit_controller.dart';
 
 // ignore: must_be_immutable
 class CaseUpdateScreen extends StatelessWidget {
-  final CaseAddController controller = Get.put(CaseAddController());
+  final CaseEditController controller = Get.put(CaseEditController());
   // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GetStorage storage = GetStorage();
 
@@ -14,6 +14,11 @@ class CaseUpdateScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = Get.arguments as Map<String, dynamic>;
+    final legalCase = args['case'];
+    final documentId = args['documentId'];
+
+    controller.setCaseData(legalCase, documentId);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -22,7 +27,7 @@ class CaseUpdateScreen extends StatelessWidget {
               Get.toNamed("/home_page");
             },
             icon: Icon(Icons.arrow_back)),
-        title: Text('Case Registration'),
+        title: Text('Case Update ${documentId}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -35,7 +40,7 @@ class CaseUpdateScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 30),
                   Text(
-                    'Register A Case',
+                    'Update A Case',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -43,7 +48,7 @@ class CaseUpdateScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Enter case details to register',
+                    'Enter case details to update',
                     style: TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 30),
@@ -182,7 +187,7 @@ class CaseUpdateScreen extends StatelessWidget {
                         if (controller.formKey.currentState?.validate() ??
                             false) {
                           // If valid, submit the case
-                          controller.registerCase();
+                          controller.updateCase(documentId);
                           // controller.onClose();
                           // Get.offNamed('/home_page');
                         }
@@ -195,7 +200,7 @@ class CaseUpdateScreen extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Add Case',
+                        'Update Case',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white,

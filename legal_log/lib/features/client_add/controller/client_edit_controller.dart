@@ -7,7 +7,7 @@ import 'package:legal_log/features/client_add/services/client_firebase_services.
 
 class ClientEditController extends GetxController {
   final formKey = GlobalKey<FormState>();
-    final GetStorage storage = GetStorage();
+  final GetStorage storage = GetStorage();
 
   // Document ID of the client being updated
   String? documentId;
@@ -64,7 +64,8 @@ class ClientEditController extends GetxController {
     addressController.addListener(() => address.value = addressController.text);
     phoneNoController.addListener(() => phoneNo.value = phoneNoController.text);
     emailController.addListener(() => email.value = emailController.text);
-    clientIdController.addListener(() => clientId.value = clientIdController.text);
+    clientIdController
+        .addListener(() => clientId.value = clientIdController.text);
     caseNolistController.addListener(() {
       caseNos.value = caseNolistController.text
           .split(',')
@@ -95,8 +96,10 @@ class ClientEditController extends GetxController {
   void updateCountryCode(CountryCode code) {
     selectedCountryCode.value = code.dialCode!;
   }
+
   String? validateAddress(String? value) {
-    if (value == null || value.trim().isEmpty) return "Address cannot be empty.";
+    if (value == null || value.trim().isEmpty)
+      return "Address cannot be empty.";
     return null;
   }
 
@@ -116,14 +119,17 @@ class ClientEditController extends GetxController {
   }
 
   String? validateClientId(String? value) {
-    if (value == null || value.trim().isEmpty) return "Client ID cannot be empty.";
+    if (value == null || value.trim().isEmpty)
+      return "Client ID cannot be empty.";
     return null;
   }
+
   String? validateCaseNos(String? value) {
     if (value == null || value.trim().isEmpty)
       return "Case Numbers cannot be empty.";
     return null;
   }
+
   // ---------------- Update Client Logic ----------------
   Future<void> updateClient() async {
     if (formKey.currentState?.validate() ?? false) {
