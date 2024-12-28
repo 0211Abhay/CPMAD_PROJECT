@@ -71,6 +71,7 @@ class MyApp extends StatelessWidget {
         '/case_add': (context) => CaseRegistrationScreen(),
         '/case_update': (context) => CaseUpdateScreen(),
       },
+      
       onGenerateRoute: (settings) {
         if (settings.name == '/file_upload') {
           final args = settings.arguments as Map<String, dynamic>;

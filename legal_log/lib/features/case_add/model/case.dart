@@ -4,7 +4,7 @@ class Case {
   String? docId; // Firestore document ID (hidden for internal use)
   final String fileNo;
   final String caseNo;
-  final String? applicantName;
+  final String applicantName;
   final List<String?> otherApplicant;
   final String opponentName;
   final List<String?> otherOpponent;

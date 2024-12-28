@@ -186,16 +186,16 @@ class CaseCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  "Case No: ${legalCase.caseNo ?? "N/A"}",
+                  "Case No: ${legalCase.caseNo}",
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                Text("File No: ${legalCase.fileNo ?? "N/A"}"),
+                Text("File No: ${legalCase.fileNo}"),
                 Text("Applicant: ${legalCase.applicantName ?? "N/A"}"),
-                Text("Opponent: ${legalCase.opponentName ?? "N/A"}"),
-                Text("Court: ${legalCase.court ?? "N/A"}"),
-                Text("Stage: ${legalCase.stage ?? "N/A"}"),
+                Text("Opponent: ${legalCase.opponentName}"),
+                Text("Court: ${legalCase.court}"),
+                Text("Stage: ${legalCase.stage}"),
                 const SizedBox(height: 8),
                 Text(
                   "Date of Filing: ${legalCase.dateOfFiling.toLocal().toString().split(' ')[0]}",
