@@ -19,9 +19,9 @@ class LoginController extends GetxController {
   final homepagecontroller = Get.put(HomeScreenController());
 
   final String senderEmail =
-      'aryan.langhanoja119561@marwadiuniversity.ac.in'; // Replace with your email
+      'mdzeeshan10101@gmail.com'; // Replace with your email
   final String senderPassword =
-      'dvvm xula uqrn nolx'; // Replace with your app password
+      'cewb qojj lylf nqey'; // Replace with your app password
 
   // Toggle password visibility
   void togglePasswordVisibility() {
