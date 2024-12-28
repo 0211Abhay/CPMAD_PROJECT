@@ -145,27 +145,93 @@ class ClientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      elevation: 4.0,
+    return GestureDetector(
+      onTap: () {
+        // Add your navigation logic here (if necessary)
+      },
       child: Container(
-        width: width, // Set width dynamically
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Client ID: ${client.clientId}", // Only display the client information, not docId
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        width: width,
+        child: Card(
+          margin: const EdgeInsets.all(8.0),
+          elevation: 6.0, // Higher elevation for a more prominent look
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0), // Rounded corners
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Client ID Text
+                Text(
+                  "Client ID: ${client.clientId}",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // White text for better contrast
+                  ),
+                ),
+                const Divider(thickness: 1.0, height: 20.0), // Divider between sections
+
+                // Client Details
+                _buildDetail("Name", client.name),
+                _buildDetail("Email", client.email),
+                _buildDetail("Phone No", client.phoneNo),
+                _buildDetail("Address", client.address),
+
+                const SizedBox(height: 8),
+
+                // Action Buttons (if required in the future)
+                // You can add action buttons below if you wish to provide more functionality
+              ],
             ),
-            const SizedBox(height: 8),
-            Text("Name: ${client.name}"),
-            Text("Email: ${client.email}"),
-            Text("Phone No: ${client.phoneNo}"),
-            Text("Address: ${client.address}"),
-          ],
+          ),
         ),
       ),
     );
   }
+
+  // Helper method to create a row with label and value
+  Widget _buildDetail(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Icon(
+            _getIconForLabel(label),
+            color: Colors.blueGrey, // Slightly transparent white for icons
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              "$label: $value",
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black, // Consistent white text for readability
+              ),
+              overflow: TextOverflow.ellipsis, // Handles overflow text
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Method to return appropriate icon for each label
+  IconData _getIconForLabel(String label) {
+    switch (label) {
+      case "Name":
+        return Icons.person;
+      case "Email":
+        return Icons.email;
+      case "Phone No":
+        return Icons.phone;
+      case "Address":
+        return Icons.location_on;
+      default:
+        return Icons.info;
+    }
+  }
 }
+

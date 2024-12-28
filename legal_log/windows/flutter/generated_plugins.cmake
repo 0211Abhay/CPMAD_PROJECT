@@ -8,6 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   firebase_storage
   flutter_any_logo
+  flutter_secure_storage_windows
   geolocator_windows
   syncfusion_pdfviewer_windows
   url_launcher_windows
