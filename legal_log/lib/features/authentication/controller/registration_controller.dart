@@ -171,8 +171,8 @@ Future<void> sendOtpIfVerified() async {
 
   // Send OTP to email
   Future<void> sendVerificationEmail(String recipientEmail) async {
-    final String senderEmail = 'aryan.langhanoja119561@marwadiuniversity.ac.in';
-    final String senderPassword = 'dvvm xula uqrn nolx'; // Your email password
+    final String senderEmail = 'mdzeeshan10101@gmail.com';
+    final String senderPassword = 'cewb qojj lylf nqey'; // Your email password
     generatedOtp.value = Random().nextInt(900000) + 100000; // Generate a 6-digit OTP
     print('Generated OTP: ${generatedOtp.value}');
 

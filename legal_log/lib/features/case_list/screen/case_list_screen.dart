@@ -152,6 +152,66 @@ class _CaseListScreenState extends State<CaseListScreen> {
   }
 }
 
+// class CaseCard extends StatelessWidget {
+//   final Case legalCase;
+//   final double width;
+//   final VoidCallback onUpdate;
+//   final VoidCallback onDelete;
+
+//   const CaseCard({
+//     super.key,
+//     required this.legalCase,
+//     required this.width,
+//     required this.onUpdate,
+//     required this.onDelete,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {
+//         Get.to(
+//           () => CaseDetailScreen(),
+//           arguments: legalCase, // Pass the case data to the details screen
+//         );
+//       },
+//       child: Container(
+//         width: width,
+//         child: Card(
+//           margin: const EdgeInsets.all(8.0),
+//           elevation: 4.0,
+//           child: Padding(
+//             padding: const EdgeInsets.all(16.0),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.stretch,
+//               children: [
+//                 Text(
+//                   "Case No: ${legalCase.caseNo ?? "N/A"}",
+//                   style: const TextStyle(
+//                       fontSize: 18, fontWeight: FontWeight.bold),
+//                 ),
+//                 const SizedBox(height: 8),
+//                 Text("File No: ${legalCase.fileNo ?? "N/A"}"),
+//                 Text("Applicant: ${legalCase.applicantName ?? "N/A"}"),
+//                 Text("Opponent: ${legalCase.opponentName ?? "N/A"}"),
+//                 Text("Court: ${legalCase.court ?? "N/A"}"),
+//                 Text("Stage: ${legalCase.stage ?? "N/A"}"),
+//                 const SizedBox(height: 8),
+//                 Text(
+//                   "Date of Filing: ${legalCase.dateOfFiling.toLocal().toString().split(' ')[0]}",
+//                   style: const TextStyle(color: Colors.grey),
+//                 ),
+//                 const SizedBox(height: 8),
+//                 Text("Note: ${legalCase.note ?? "N/A"}"),
+//                 const SizedBox(height: 16),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 class CaseCard extends StatelessWidget {
   final Case legalCase;
   final double width;
@@ -179,35 +239,145 @@ class CaseCard extends StatelessWidget {
         width: width,
         child: Card(
           margin: const EdgeInsets.all(8.0),
-          elevation: 4.0,
+          elevation: 6.0, // More prominent elevation
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0), // Rounded corners
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Case Number
+                Row(
+                  children: [
+                    Icon(
+                      Icons.bookmark_border,
+                      color: Colors.black87,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Case No: ${legalCase.caseNo ?? "N/A"}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(thickness: 1.0, height: 20.0), // Divider below Case No
+
+                // Case Details
+                _buildDetail("File No", legalCase.fileNo, Icons.document_scanner),
+                _buildDetail("Applicant", legalCase.applicantName, Icons.person),
+                _buildDetail("Opponent", legalCase.opponentName, Icons.person_outline),
+                _buildDetail("Court", legalCase.court, Icons.gavel),
+                _buildDetail("Stage", legalCase.stage, Icons.timeline),
+
+                const SizedBox(height: 8),
+
+                // Filing Date
+                Row(
+                  
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      color: Colors.grey,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Date of Filing:",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(width:4),
+                    Text(
+                      legalCase.dateOfFiling.toLocal().toString().split(' ')[0],
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // Note Section
+                Row(
+                  children: [
+                    Icon(
+                      Icons.note_alt_outlined,
+                      color: Colors.black87,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Note:",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
                 Text(
-                  "Case No: ${legalCase.caseNo}",
+                  legalCase.note ?? "N/A",
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Text("File No: ${legalCase.fileNo}"),
-                Text("Applicant: ${legalCase.applicantName ?? "N/A"}"),
-                Text("Opponent: ${legalCase.opponentName}"),
-                Text("Court: ${legalCase.court}"),
-                Text("Stage: ${legalCase.stage}"),
-                const SizedBox(height: 8),
-                Text(
-                  "Date of Filing: ${legalCase.dateOfFiling.toLocal().toString().split(' ')[0]}",
-                  style: const TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 8),
-                Text("Note: ${legalCase.note ?? "N/A"}"),
+
                 const SizedBox(height: 16),
+
+                // Action Buttons
+                // You can add action buttons here if needed (e.g. Update, Delete)
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDetail(String label, String? value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: Colors.black87,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            "$label: ",
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value ?? "N/A",
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
