@@ -56,21 +56,21 @@ class CaseAddController extends GetxController {
     caseNoController = TextEditingController(text: caseNo.value);
     applicantNameController = TextEditingController(text: applicantName.value);
     otherapplicantNameController = TextEditingController(
-      text: otherApplicant.isNotEmpty ? otherApplicant.join(', ') : '',
+      text: otherApplicant.isNotEmpty ? otherApplicant.join(',') : '',
     );
     opponentNameController = TextEditingController(text: opponentName.value);
     otheropponentNameController = TextEditingController(
-      text: otherOpponent.isNotEmpty ? otherOpponent.join(', ') : '',
+      text: otherOpponent.isNotEmpty ? otherOpponent.join(',') : '',
     );
     ourClientController = TextEditingController(text: ourClient.value);
     areaController = TextEditingController(text: area.value);
     courtController = TextEditingController(text: court.value);
     judgeController = TextEditingController(text: judge.value);
     ourAdvocatesController = TextEditingController(
-      text: ourAdvocates.isNotEmpty ? ourAdvocates.join(', ') : '',
+      text: ourAdvocates.isNotEmpty ? ourAdvocates.join(',') : '',
     );
     opponentAdvocatesController = TextEditingController(
-      text: opponentAdvocates.isNotEmpty ? opponentAdvocates.join(', ') : '',
+      text: opponentAdvocates.isNotEmpty ? opponentAdvocates.join(',') : '',
     );
     dateOfFilingController = TextEditingController(text: dateOfFiling.value);
     stageController = TextEditingController(text: stage.value);
@@ -218,7 +218,9 @@ class CaseAddController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          
         );
+        onClose();
       } catch (_) {
         Get.snackbar(
           'Error',

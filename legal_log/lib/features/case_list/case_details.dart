@@ -15,7 +15,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 String _formatList(List<String?> list) {
-  return list.where((item) => item != null).join(', ');
+  return list.where((item) => item != null).join(',');
 }
 
 String _formatStringList(List<String> list) {
@@ -73,7 +73,7 @@ class CaseDetailScreen extends StatelessWidget {
                     _buildTableRow("Court", legalCase.court, context),
                     _buildTableRow("Judge", legalCase.judge, context),
                     _buildTableRow("Our Advocates",  _formatStringList(legalCase.ourAdvocates), context),
-                    _buildTableRow("Opponent Advocate",  _formatStringList(legalCase.ourAdvocates), context),
+                    _buildTableRow("Opponent Advocate",  _formatStringList(legalCase.opponentAdvocates), context),
                     _buildTableRow("Stage", legalCase.stage, context),
                     _buildTableRow("Date of Filing", 
                       legalCase.dateOfFiling.toLocal().toString().split(' ')[0], 
@@ -189,7 +189,7 @@ Future<void> _generateAndOpenReport(Case legalCase, String userName) async {
                   bottom: 0,
                   child: pw.Center(
                     child: pw.Opacity(
-                      opacity: 0.1,
+                      opacity: 0.3,
                       child: pw.Transform.rotate(
                         angle: 0.0,
                         child: pw.Image(logoImageProvider, width: 400),
@@ -260,6 +260,8 @@ Future<void> _generateAndOpenReport(Case legalCase, String userName) async {
     final fileName = 'case_report_${legalCase.caseNo}_${DateTime.now().millisecondsSinceEpoch}.pdf';
     final filePath = '${directory.path}/$fileName';
 
+    print('Report is Saved At ${filePath}');
+
     // Save PDF
     final file = File(filePath);
     await file.writeAsBytes(await pdf.save());
@@ -314,7 +316,7 @@ Future<void> _generateAndOpenReport(Case legalCase, String userName) async {
         _buildPdfTableRow("Court", legalCase.court),
         _buildPdfTableRow("Judge", legalCase.judge),
         _buildPdfTableRow("Our Advocates",  _formatStringList(legalCase.ourAdvocates)),
-        _buildPdfTableRow("Opponent Advocate",  _formatStringList(legalCase.ourAdvocates)),
+        _buildPdfTableRow("Opponent Advocate",  _formatStringList(legalCase.opponentAdvocates)),
         _buildPdfTableRow("Stage", legalCase.stage),
         _buildPdfTableRow("Date of Filing", 
           legalCase.dateOfFiling.toLocal().toString().split(' ')[0]),
