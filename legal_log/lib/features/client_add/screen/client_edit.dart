@@ -22,7 +22,8 @@ class ClientUpdateScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-          Get.back();
+            controller.Clear_Controllers();
+            Get.offNamed('/home_page');
           },
           icon: Icon(Icons.arrow_back),
         ),
@@ -130,6 +131,7 @@ class ClientUpdateScreen extends StatelessWidget {
                       onPressed: () {
                         if (controller.formKey.currentState?.validate() ?? false) {
                           controller.updateClient();
+                          Get.offNamed('/home_page');
                         }
                       },
                       style: ElevatedButton.styleFrom(
