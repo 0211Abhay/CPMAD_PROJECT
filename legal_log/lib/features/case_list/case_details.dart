@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:legal_log/common_widgets/show_loader.dart';
 import 'package:legal_log/features/case_add/model/case.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:legal_log/features/case_list/view_case_files.dart';
@@ -15,8 +16,7 @@ import 'package:open_file/open_file.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:legal_log/features/case_notes/case_notes_view.dart';  // Adjust the import based on the location of CaseNotesView
-
+import 'package:legal_log/features/case_notes/case_notes_view.dart'; // Adjust the import based on the location of CaseNotesView
 
 String _formatList(List<String?> list) {
   return list.where((item) => item != null).join(',');
@@ -40,7 +40,8 @@ class CaseDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Case? legalCase = Get.arguments;
     String userName = storage.read('user')['name'];
-     String advocateId = storage.read('user')['advocate_id']; // Advocate ID from storage
+    String advocateId =
+        storage.read('user')['advocate_id']; // Advocate ID from storage
     return Scaffold(
       appBar: AppBar(
         title: const Text("Case Details"),
@@ -68,26 +69,36 @@ class CaseDetailScreen extends StatelessWidget {
                     _buildTableRow(
                         "Case ID", legalCase?.docId ?? "N/A", context),
                     _buildTableRow("Advocate Name", userName, context),
-                    _buildTableRow("Case No", legalCase?.caseNo ?? "N/A", context),
-                    _buildTableRow("File No", legalCase?.fileNo ?? "N/A", context),
                     _buildTableRow(
-                        "Applicant", legalCase?.applicantName ?? "N/A", context),
-                    _buildTableRow("Other Applicant",
-                        _formatList(legalCase!.otherApplicant) ?? "N/A", context),
-                    _buildTableRow("Opponent", legalCase?.opponentName ?? "N/A", context),
-                    _buildTableRow("Other Opponent",
-                        _formatList(legalCase!.otherOpponent) ?? "N/A", context),
-                    _buildTableRow("Client", legalCase.ourClient?? "N/A", context),
-                    _buildTableRow("Area", legalCase.area?? "N/A", context),
-                    _buildTableRow("Court", legalCase.court?? "N/A", context),
+                        "Case No", legalCase?.caseNo ?? "N/A", context),
+                    _buildTableRow(
+                        "File No", legalCase?.fileNo ?? "N/A", context),
+                    _buildTableRow("Applicant",
+                        legalCase?.applicantName ?? "N/A", context),
+                    _buildTableRow(
+                        "Other Applicant",
+                        _formatList(legalCase!.otherApplicant) ?? "N/A",
+                        context),
+                    _buildTableRow(
+                        "Opponent", legalCase?.opponentName ?? "N/A", context),
+                    _buildTableRow(
+                        "Other Opponent",
+                        _formatList(legalCase!.otherOpponent) ?? "N/A",
+                        context),
+                    _buildTableRow(
+                        "Client", legalCase.ourClient ?? "N/A", context),
+                    _buildTableRow("Area", legalCase.area ?? "N/A", context),
+                    _buildTableRow("Court", legalCase.court ?? "N/A", context),
                     _buildTableRow("Judge", legalCase.judge ?? "N/A", context),
-                    _buildTableRow("Our Advocates",
-                        _formatStringList(legalCase.ourAdvocates)?? "N/A", context),
+                    _buildTableRow(
+                        "Our Advocates",
+                        _formatStringList(legalCase.ourAdvocates) ?? "N/A",
+                        context),
                     _buildTableRow(
                         "Opponent Advocate",
-                        _formatStringList(legalCase.opponentAdvocates)?? "N/A",
+                        _formatStringList(legalCase.opponentAdvocates) ?? "N/A",
                         context),
-                    _buildTableRow("Stage", legalCase.stage?? "N/A", context),
+                    _buildTableRow("Stage", legalCase.stage ?? "N/A", context),
                     _buildTableRow(
                         "Date of Filing",
                         legalCase.dateOfFiling
@@ -120,7 +131,6 @@ class CaseDetailScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12),
           ),
         ),
-        
         const SizedBox(height: 12),
         ElevatedButton.icon(
           onPressed: () => _uploadFile(legalCase),
@@ -178,11 +188,10 @@ class CaseDetailScreen extends StatelessWidget {
   Future<void> _generateAndOpenReport(Case legalCase, String userName) async {
     try {
       // Show loading indicator
-      Get.dialog(
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
-        barrierDismissible: false,
+      showLottieDialog(
+        animationPath:
+            'assets/lottie/generatereport.json', // Path to your Lottie loader animation
+        message: 'Generating PDF Report',
       );
 
       final logoImage = await _loadLogoImage();
@@ -364,8 +373,6 @@ class CaseDetailScreen extends StatelessWidget {
       ],
     );
   }
-
- 
 
   void _uploadFile(Case legalCase) {
     Get.toNamed('/file_upload', arguments: {'caseId': legalCase.docId ?? ""});
