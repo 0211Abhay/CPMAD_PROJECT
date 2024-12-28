@@ -382,4 +382,3 @@ class CaseCard extends StatelessWidget {
     );
   }
 }
-
