@@ -67,6 +67,15 @@ class ClientAddController extends GetxController {
     super.onClose();
   }
 
+  void Clear_Controllers() {
+    nameController.clear();
+    addressController.clear();
+    phoneNoController.clear();
+    emailController.clear();
+    clientIdController.clear();
+    caseNolistController.clear();    
+  }
+
   // ----------------------------- Validation Methods -----------------------------
   String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) return "Name cannot be empty.";

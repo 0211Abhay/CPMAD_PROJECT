@@ -75,6 +75,15 @@ class ClientEditController extends GetxController {
     });
   }
 
+  void Clear_Controllers() {
+    nameController.clear();
+    addressController.clear();
+    phoneNoController.clear();
+    emailController.clear();
+    clientIdController.clear();
+    caseNolistController.clear();    
+  }
+  
   @override
   void onClose() {
     nameController.dispose();
