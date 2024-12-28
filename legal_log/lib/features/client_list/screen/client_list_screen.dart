@@ -5,6 +5,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/features/client_add/controller/client_add_controller.dart';
 import 'package:legal_log/features/client_add/model/client.dart';
 import 'package:legal_log/features/client_add/services/client_firebase_services.dart';
+import 'package:legal_log/features/client_list/client_details.dart';
+
 
 class ClientListScreen extends StatefulWidget {
   const ClientListScreen({super.key});
@@ -107,6 +109,10 @@ class _ClientListScreenState extends State<ClientListScreen> {
                 child: ClientCard(
                   client: client,
                   width: MediaQuery.of(context).size.width,
+                  onTap: () {
+                    // Navigate to ClientDetailScreen using Get
+                    Get.to(() => ClientDetailScreen(clientDocId: client.docId!));
+                  },
                 ),
               );
             },
@@ -140,15 +146,19 @@ class _ClientListScreenState extends State<ClientListScreen> {
 class ClientCard extends StatelessWidget {
   final Client client;
   final double width;
+  final VoidCallback onTap;
 
-  const ClientCard({super.key, required this.client, required this.width});
+  const ClientCard({
+    super.key,
+    required this.client,
+    required this.width,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // Add your navigation logic here (if necessary)
-      },
+      onTap: onTap,
       child: Container(
         width: width,
         child: Card(
@@ -234,4 +244,3 @@ class ClientCard extends StatelessWidget {
     }
   }
 }
-
