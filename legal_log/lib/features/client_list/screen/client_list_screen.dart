@@ -83,15 +83,15 @@ class _ClientListScreenState extends State<ClientListScreen> {
                     return false;
                   } else if (direction == DismissDirection.startToEnd) {
                     // Confirmation for update action
-                    final shouldUpdate =
-                        await _showConfirmationDialog(context, "Update");
-                    if (shouldUpdate ?? false) {
+                    // final shouldUpdate =
+                    //     await _showConfirmationDialog(context, "Update");
+                    // if (shouldUpdate ?? false) {
                       // Navigate to update screen
                       Get.toNamed('/client_update', arguments: {
                         'client': client,
                         'documentId': client.docId,
                       });
-                    }
+                    // }
                     // Cancel the dismissal
                     return false;
                   }
