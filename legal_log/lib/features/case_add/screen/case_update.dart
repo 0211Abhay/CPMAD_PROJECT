@@ -24,10 +24,11 @@ class CaseUpdateScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              Get.toNamed("/home_page");
+              Get.offNamed("/home_page");
+              controller.Clear_Controller();
             },
             icon: Icon(Icons.arrow_back)),
-        title: Text('Case Update ${documentId}'),
+        title: Text('Case Update'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -188,6 +189,7 @@ class CaseUpdateScreen extends StatelessWidget {
                             false) {
                           // If valid, submit the case
                           controller.updateCase(documentId);
+                          Get.offNamed('/home_page');
                           // controller.onClose();
                           // Get.offNamed('/home_page');
                         }

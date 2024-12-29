@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:legal_log/common_widgets/show_loader.dart';
 import 'package:legal_log/features/case_add/model/case.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -75,10 +76,8 @@ class CaseDetailScreen extends StatelessWidget {
                         "File No", legalCase?.fileNo ?? "N/A", context),
                     _buildTableRow("Applicant",
                         legalCase?.applicantName ?? "N/A", context),
-                    _buildTableRow(
-                        "Other Applicant",
-                        _formatList(legalCase?.otherApplicant ?? [] ),
-                        context),
+                    _buildTableRow("Other Applicant",
+                        _formatList(legalCase?.otherApplicant ?? []), context),
                     _buildTableRow(
                         "Opponent", legalCase?.opponentName ?? "N/A", context),
                     _buildTableRow(
@@ -189,10 +188,16 @@ class CaseDetailScreen extends StatelessWidget {
     try {
       // Show loading indicator
       showLottieDialog(
-        animationPath:
-            'assets/lottie/generatereport.json', // Path to your Lottie loader animation
+        animationPath: 'assets/lottie/generatereport.json',
         message: 'Generating PDF Report',
       );
+
+      final notesSnapshot = await FirebaseFirestore.instance
+          .collection('case')
+          .doc(legalCase.docId)
+          .collection('case_note')
+          .orderBy('timestamp', descending: true)
+          .get();
 
       final logoImage = await _loadLogoImage();
       final logoImageProvider = pw.MemoryImage(logoImage);
@@ -204,93 +209,154 @@ class CaseDetailScreen extends StatelessWidget {
       pdf.addPage(
         pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(40),
+          header: (pw.Context context) {
+            // Header will be repeated on each page
+            return pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'Case Report',
+                      style: pw.TextStyle(
+                        fontSize: 24,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                    pw.SizedBox(height: 5),
+                    pw.Text(
+                      'Generated: ${DateTime.now().toString().split('.')[0]}',
+                      style: const pw.TextStyle(
+                        fontSize: 10,
+                        color: PdfColors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                pw.Image(
+                  logoImageProvider,
+                  width: 60,
+                  height: 60,
+                ),
+              ],
+            );
+          },
+          footer: (pw.Context context) {
+            // Footer will be repeated on each page
+            return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(top: 10),
+              child: pw.Text(
+                'Page ${context.pageNumber} of ${context.pagesCount}',
+                style: const pw.TextStyle(
+                  fontSize: 10,
+                  color: PdfColors.grey,
+                ),
+              ),
+            );
+          },
           build: (pw.Context context) {
             return [
+              // Watermark as background
               pw.Stack(
                 children: [
-                  // Watermark as background
-                  pw.Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    child: pw.Center(
-                      child: pw.Opacity(
-                        opacity: 0.3,
-                        child: pw.Transform.rotate(
-                          angle: 0.0,
-                          child: pw.Image(logoImageProvider, width: 400),
-                        ),
+                  pw.Center(
+                    child: pw.Opacity(
+                      opacity: 0.1, // Reduced opacity for better readability
+                      child: pw.Transform.rotate(
+                        angle: 0.0, // Slight rotation for watermark effect
+                        child: pw.Image(logoImageProvider, width: 600),
                       ),
                     ),
                   ),
 
-                  // Content on top of watermark
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+                  // Case details table
+                  _buildPdfTable(legalCase, userName),
+                ],
+              ),
+
+              pw.SizedBox(height: 150),
+
+              // Case notes section
+              pw.Header(
+                level: 1,
+                text: 'Case Notes Timeline',
+                textStyle: pw.TextStyle(
+                  fontSize: 18,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.SizedBox(height: 10),
+
+              // Case notes with proper spacing and formatting
+              ...notesSnapshot.docs.map((noteDoc) {
+                final note = noteDoc.data() as Map<String, dynamic>;
+                final timestamp = note['timestamp'] as Timestamp;
+                final noteText = note['note'] as String;
+                final date = timestamp.toDate();
+
+                return pw.Container(
+                  margin: const pw.EdgeInsets.only(bottom: 15),
+                  child: pw.Row(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      // Header with logo
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Column(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              pw.Text(
-                                'Case Report',
-                                style: pw.TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: pw.FontWeight.bold,
-                                ),
-                              ),
-                              pw.SizedBox(height: 5),
-                              pw.Text(
-                                'Generated: ${DateTime.now().toString().split('.')[0]}',
-                                style: const pw.TextStyle(
-                                  fontSize: 10,
-                                  color: PdfColors.grey,
-                                ),
-                              ),
-                            ],
+                      pw.Container(
+                        width: 80,
+                        child: pw.Text(
+                          DateFormat('MMM dd, yyyy\nhh:mm a').format(date),
+                          style: const pw.TextStyle(
+                            fontSize: 8,
+                            color: PdfColors.grey600,
                           ),
-                          pw.Image(
-                            logoImageProvider,
-                            width: 60,
-                            height: 60,
-                          ),
-                        ],
+                        ),
                       ),
-                      pw.SizedBox(height: 20),
-
-                      // Table content
-                      _buildPdfTable(legalCase, userName),
-
-                      pw.SizedBox(height: 20),
-                      pw.Text(
-                        'This is an automatically generated report.',
-                        style: const pw.TextStyle(
-                          fontSize: 8,
-                          color: PdfColors.grey,
+                      pw.SizedBox(width: 10),
+                      pw.Expanded(
+                        child: pw.Container(
+                          padding: const pw.EdgeInsets.all(8),
+                          decoration: pw.BoxDecoration(
+                            border: pw.Border.all(
+                              color: PdfColors.grey300,
+                            ),
+                            borderRadius: const pw.BorderRadius.all(
+                              pw.Radius.circular(4),
+                            ),
+                          ),
+                          child: pw.Text(
+                            noteText,
+                            style: const pw.TextStyle(fontSize: 9),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ],
+                );
+              }).toList(),
+
+              // Footer note
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(top: 20),
+                child: pw.Text(
+                  'This is an automatically generated report.',
+                  style: const pw.TextStyle(
+                    fontSize: 8,
+                    color: PdfColors.grey,
+                  ),
+                ),
               ),
             ];
           },
         ),
       );
 
-      // Get directory for saving PDF
+      // Get directory and save PDF
       final directory = await getApplicationDocumentsDirectory();
       final fileName =
           'case_report_${legalCase.caseNo}_${DateTime.now().millisecondsSinceEpoch}.pdf';
       final filePath = '${directory.path}/$fileName';
 
-      print('Report is Saved At ${filePath}');
-
-      // Save PDF
       final file = File(filePath);
       await file.writeAsBytes(await pdf.save());
 
@@ -309,12 +375,10 @@ class CaseDetailScreen extends StatelessWidget {
       // Open the generated PDF
       await OpenFile.open(filePath);
     } catch (e) {
-      // Close loading dialog if open
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
 
-      // Show error message
       Get.snackbar(
         'Error',
         'Failed to generate PDF: ${e.toString()}',

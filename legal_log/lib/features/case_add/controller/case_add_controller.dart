@@ -81,17 +81,43 @@ class CaseAddController extends GetxController {
     caseNoController.addListener(() => caseNo.value = caseNoController.text);
     applicantNameController
         .addListener(() => applicantName.value = applicantNameController.text);
+    otherapplicantNameController.addListener(() =>
+        otherApplicant.value = otherapplicantNameController.text.split(','));
     opponentNameController
         .addListener(() => opponentName.value = opponentNameController.text);
+    otheropponentNameController.addListener(() =>
+        otherOpponent.value = otheropponentNameController.text.split(','));
     ourClientController
         .addListener(() => ourClient.value = ourClientController.text);
     areaController.addListener(() => area.value = areaController.text);
     courtController.addListener(() => court.value = courtController.text);
     judgeController.addListener(() => judge.value = judgeController.text);
+    ourAdvocatesController.addListener(
+        () => ourAdvocates.value = ourAdvocatesController.text.split(','));
+    opponentAdvocatesController.addListener(() =>
+        opponentAdvocates.value = opponentAdvocatesController.text.split(','));
     dateOfFilingController
         .addListener(() => dateOfFiling.value = dateOfFilingController.text);
     stageController.addListener(() => stage.value = stageController.text);
     noteController.addListener(() => note.value = noteController.text);
+  }
+
+  void Clear_Controller() {
+    fileNoController.clear();
+    caseNoController.clear();
+    applicantNameController.clear();
+    otherapplicantNameController.clear();
+    opponentNameController.clear();
+    otheropponentNameController.clear();
+    ourClientController.clear();
+    areaController.clear();
+    courtController.clear();
+    judgeController.clear();
+    ourAdvocatesController.clear();
+    opponentAdvocatesController.clear();
+    dateOfFilingController.clear();
+    stageController.clear();
+    noteController.clear();
   }
 
   @override
@@ -100,11 +126,15 @@ class CaseAddController extends GetxController {
     fileNoController.dispose();
     caseNoController.dispose();
     applicantNameController.dispose();
+    otherapplicantNameController.dispose();
     opponentNameController.dispose();
+    otheropponentNameController.dispose();
     ourClientController.dispose();
     areaController.dispose();
     courtController.dispose();
     judgeController.dispose();
+    ourAdvocatesController.dispose();
+    opponentAdvocatesController.dispose();
     dateOfFilingController.dispose();
     stageController.dispose();
     noteController.dispose();
@@ -218,10 +248,8 @@ class CaseAddController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
-          
         );
-        onClose();
-      } catch (_) {
+      } catch (e) {
         Get.snackbar(
           'Error',
           'Failed to register case. Please try again.',

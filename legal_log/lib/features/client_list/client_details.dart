@@ -6,7 +6,8 @@ import 'package:legal_log/features/client_add/model/client.dart';
 class ClientDetailScreen extends StatefulWidget {
   final String clientDocId; // Firestore document ID of the client
 
-  const ClientDetailScreen({required this.clientDocId, Key? key}) : super(key: key);
+  const ClientDetailScreen({required this.clientDocId, Key? key})
+      : super(key: key);
 
   @override
   State<ClientDetailScreen> createState() => _ClientDetailScreenState();
@@ -71,15 +72,21 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                         child: ListView(
                           children: [
                             DetailTile(title: 'Name', value: client!.name),
-                            DetailTile(title: 'Address', value: client!.address),
-                            DetailTile(title: 'Phone No', value: client!.phoneNo),
+                            DetailTile(
+                                title: 'Address', value: client!.address),
+                            DetailTile(
+                                title: 'Phone No', value: client!.phoneNo),
                             DetailTile(title: 'Email', value: client!.email),
-                            DetailTile(title: 'Client ID', value: client!.clientId),
-                            DetailTile(title: 'Advocate ID', value: client!.advocate_id),
+                            DetailTile(
+                                title: 'Client ID', value: client!.clientId),
+                            DetailTile(
+                                title: 'Advocate ID',
+                                value: client!.advocate_id),
                             const SizedBox(height: 16),
                             const Text(
                               'Case Numbers:',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             ...client!.caseNos.map((caseNo) => ListTile(
                                   title: Text(caseNo),
@@ -112,7 +119,8 @@ class DetailTile extends StatelessWidget {
   final String title;
   final String value;
 
-  const DetailTile({required this.title, required this.value, Key? key}) : super(key: key);
+  const DetailTile({required this.title, required this.value, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
