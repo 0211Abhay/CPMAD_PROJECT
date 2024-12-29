@@ -264,10 +264,10 @@ class CaseDetailScreen extends StatelessWidget {
                 children: [
                   pw.Center(
                     child: pw.Opacity(
-                      opacity: 0.3, // Reduced opacity for better readability
+                      opacity: 0.1, // Reduced opacity for better readability
                       child: pw.Transform.rotate(
                         angle: 0.0, // Slight rotation for watermark effect
-                        child: pw.Image(logoImageProvider, width: 100),
+                        child: pw.Image(logoImageProvider, width: 600),
                       ),
                     ),
                   ),
@@ -277,7 +277,7 @@ class CaseDetailScreen extends StatelessWidget {
                 ],
               ),
 
-              pw.SizedBox(height: 120),
+              pw.SizedBox(height: 150),
 
               // Case notes section
               pw.Header(
@@ -292,7 +292,7 @@ class CaseDetailScreen extends StatelessWidget {
 
               // Case notes with proper spacing and formatting
               ...notesSnapshot.docs.map((noteDoc) {
-                final note = noteDoc.data();
+                final note = noteDoc.data() as Map<String, dynamic>;
                 final timestamp = note['timestamp'] as Timestamp;
                 final noteText = note['note'] as String;
                 final date = timestamp.toDate();
