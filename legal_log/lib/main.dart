@@ -1,3 +1,4 @@
+import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -35,6 +36,8 @@ void main() async {
 
   // Registering the LoginController with GetX
   Get.put(LoginController());
+
+  // Registering the Firebase File Upload with GetX
 
   runApp(const MyApp());
 }
