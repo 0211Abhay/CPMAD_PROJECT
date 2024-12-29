@@ -5,7 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/features/client_add/controller/client_add_controller.dart';
 import 'package:legal_log/features/client_add/model/client.dart';
 import 'package:legal_log/features/client_add/services/client_firebase_services.dart';
-import 'package:legal_log/features/case_notes/client_details.dart';
+import 'package:legal_log/features/client_list/client_details.dart';
 
 class ClientListScreen extends StatefulWidget {
   const ClientListScreen({super.key});
