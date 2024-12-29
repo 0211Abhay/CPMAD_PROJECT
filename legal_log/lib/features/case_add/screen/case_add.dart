@@ -14,12 +14,14 @@ class CaseRegistrationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              Get.toNamed("/home_page");
+              Get.offNamed("/home_page");
+              controller.Clear_Controller();
             },
             icon: Icon(Icons.arrow_back)),
         title: Text('Case Registration'),
@@ -183,6 +185,7 @@ class CaseRegistrationScreen extends StatelessWidget {
                             false) {
                           // If valid, submit the case
                           controller.registerCase();
+                          Get.offNamed('/home_page');
                           // controller.onClose();
                           // Get.offNamed('/home_page');
                         }
@@ -196,6 +199,7 @@ class CaseRegistrationScreen extends StatelessWidget {
                       ),
                       child: Text(
                         'Add Case',
+                        
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white,

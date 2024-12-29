@@ -50,7 +50,7 @@ class CaseEditController extends GetxController {
     documentId = docId;
     fileNo.value = legalCase.fileNo;
     caseNo.value = legalCase.caseNo;
-    applicantName.value = legalCase.applicantName!;
+    applicantName.value = legalCase.applicantName;
     otherApplicant.value =
         legalCase.otherApplicant.map((e) => e ?? '').toList();
     opponentName.value = legalCase.opponentName;
@@ -62,16 +62,16 @@ class CaseEditController extends GetxController {
 
     fileNoController.text = legalCase.fileNo;
     caseNoController.text = legalCase.caseNo;
-    applicantNameController.text = legalCase.applicantName!;
-    otherapplicantNameController.text = legalCase.otherApplicant.join(', ');
+    applicantNameController.text = legalCase.applicantName;
+    otherapplicantNameController.text = legalCase.otherApplicant.join(',');
     opponentNameController.text = legalCase.opponentName;
-    otheropponentNameController.text = legalCase.otherOpponent.join(', ');
+    otheropponentNameController.text = legalCase.otherOpponent.join(',');
     ourClientController.text = legalCase.ourClient;
     areaController.text = legalCase.area;
     courtController.text = legalCase.court;
     judgeController.text = legalCase.judge;
-    ourAdvocatesController.text = legalCase.ourAdvocates.join(', ');
-    opponentAdvocatesController.text = legalCase.opponentAdvocates.join(', ');
+    ourAdvocatesController.text = legalCase.ourAdvocates.join(',');
+    opponentAdvocatesController.text = legalCase.opponentAdvocates.join(',');
     dateOfFilingController.text =
         legalCase.dateOfFiling.toLocal().toString().split(' ')[0];
     stageController.text = legalCase.stage;
@@ -125,6 +125,24 @@ class CaseEditController extends GetxController {
         .addListener(() => dateOfFiling.value = dateOfFilingController.text);
     stageController.addListener(() => stage.value = stageController.text);
     noteController.addListener(() => note.value = noteController.text);
+  }
+
+  void Clear_Controller() {
+    fileNoController.clear();
+    caseNoController.clear();
+    applicantNameController.clear();
+    otherapplicantNameController.clear();
+    opponentNameController.clear();
+    otheropponentNameController.clear();
+    ourClientController.clear();
+    areaController.clear();
+    courtController.clear();
+    judgeController.clear();
+    ourAdvocatesController.clear();
+    opponentAdvocatesController.clear();
+    dateOfFilingController.clear();
+    stageController.clear();
+    noteController.clear();
   }
 
   @override
@@ -250,7 +268,7 @@ class CaseEditController extends GetxController {
           colorText: Colors.white,
         );
 
-        Get.toNamed("/home_page");
+        Get.offNamed('/home_page');
       } catch (e) {
         Get.snackbar(
           'Error',

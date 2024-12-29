@@ -16,6 +16,7 @@ class ClientRegistrationScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
+              controller.Clear_Controllers();
               Get.toNamed("/home_page");
             },
             icon: Icon(Icons.arrow_back)),
@@ -131,6 +132,7 @@ class ClientRegistrationScreen extends StatelessWidget {
                             false) {
                           // If valid, submit the case
                           controller.registerClient();
+                          Get.offNamed('/home_page');
                         }
                       },
                       style: ElevatedButton.styleFrom(
