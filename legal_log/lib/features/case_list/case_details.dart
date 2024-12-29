@@ -77,7 +77,7 @@ class CaseDetailScreen extends StatelessWidget {
                         legalCase?.applicantName ?? "N/A", context),
                     _buildTableRow(
                         "Other Applicant",
-                        _formatList(legalCase!.otherApplicant) ?? "N/A",
+                        _formatList(legalCase?.otherApplicant ?? [] ),
                         context),
                     _buildTableRow(
                         "Opponent", legalCase?.opponentName ?? "N/A", context),
