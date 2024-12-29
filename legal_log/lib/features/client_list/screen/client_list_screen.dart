@@ -5,8 +5,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:legal_log/features/client_add/controller/client_add_controller.dart';
 import 'package:legal_log/features/client_add/model/client.dart';
 import 'package:legal_log/features/client_add/services/client_firebase_services.dart';
-import 'package:legal_log/features/client_list/client_details.dart';
-
+import 'package:legal_log/features/case_notes/client_details.dart';
 
 class ClientListScreen extends StatefulWidget {
   const ClientListScreen({super.key});
@@ -111,7 +110,8 @@ class _ClientListScreenState extends State<ClientListScreen> {
                   width: MediaQuery.of(context).size.width,
                   onTap: () {
                     // Navigate to ClientDetailScreen using Get
-                    Get.to(() => ClientDetailScreen(clientDocId: client.docId!));
+                    Get.to(
+                        () => ClientDetailScreen(clientDocId: client.docId!));
                   },
                 ),
               );
@@ -181,7 +181,8 @@ class ClientCard extends StatelessWidget {
                     color: Colors.black, // White text for better contrast
                   ),
                 ),
-                const Divider(thickness: 1.0, height: 20.0), // Divider between sections
+                const Divider(
+                    thickness: 1.0, height: 20.0), // Divider between sections
 
                 // Client Details
                 _buildDetail("Name", client.name),
