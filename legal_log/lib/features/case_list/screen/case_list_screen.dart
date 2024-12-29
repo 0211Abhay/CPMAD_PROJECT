@@ -111,14 +111,14 @@ class _CaseListScreenState extends State<CaseListScreen> {
                           }
                           return false;
                         } else if (direction == DismissDirection.startToEnd) {
-                          final shouldUpdate =
-                              await _showConfirmationDialog(context, "Update");
-                          if (shouldUpdate ?? false) {
+                          // final shouldUpdate =
+                          //     await _showConfirmationDialog(context, "Update");
+                          // if (shouldUpdate ?? false) {
                             Get.toNamed('/case_update', arguments: {
                               'case': legalCase,
                               'documentId': legalCase.docId,
                             });
-                          }
+                          // }
                           return false;
                         }
                         return false;
