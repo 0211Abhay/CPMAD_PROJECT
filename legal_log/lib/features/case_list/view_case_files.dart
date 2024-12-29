@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -17,12 +17,12 @@ class ViewCaseFilesScreen extends StatefulWidget {
 
 class _ViewCaseFilesScreenState extends State<ViewCaseFilesScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   late Stream<QuerySnapshot> _fileStream;
 
   @override
   void initState() {
     super.initState();
-    // Fetch files related to the caseId
     _fileStream = _firestore
         .collection('case_file_upload')
         .where('case_id', isEqualTo: widget.caseId)
@@ -54,11 +54,19 @@ class _ViewCaseFilesScreenState extends State<ViewCaseFilesScreen> {
             itemCount: files.length,
             itemBuilder: (context, index) {
               var file = files[index];
-              return ListTile(
-                leading: _getFileIcon(file['file_type']),
-                title: Text(file['file_name']),
-                subtitle: Text(file['file_description'] ?? 'No description'),
-                onTap: () => _openFile(file['file_path'], file['file_type']),
+              return Card(
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                elevation: 7,
+                child: ListTile(
+                  leading: _getFileIcon(file['file_type']),
+                  title: Text(file['file_name']),
+                  subtitle: Text(file['file_description'] ?? 'No description'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _deleteFile(file.id, file['file_path']),
+                  ),
+                  onTap: () => _openFile(file['file_path'], file['file_type']),
+                ),
               );
             },
           );
@@ -82,7 +90,6 @@ class _ViewCaseFilesScreenState extends State<ViewCaseFilesScreen> {
 
   Future<void> _openFile(String fileUrl, String fileType) async {
     try {
-      // Download the file to a local directory
       final tempDir = await getTemporaryDirectory();
       final localFile = File('${tempDir.path}/${fileUrl.split('/').last}');
       if (!localFile.existsSync()) {
@@ -90,7 +97,6 @@ class _ViewCaseFilesScreenState extends State<ViewCaseFilesScreen> {
         await dio.download(fileUrl, localFile.path);
       }
 
-      // Open the file based on its type
       if (fileType == 'pdf') {
         Navigator.push(
           context,
@@ -98,7 +104,6 @@ class _ViewCaseFilesScreenState extends State<ViewCaseFilesScreen> {
             builder: (context) => PdfViewerScreen(filePath: localFile.path),
           ),
         ).then((_) {
-          // Delete the file when the user navigates back
           if (localFile.existsSync()) {
             localFile.delete();
           }
@@ -110,7 +115,6 @@ class _ViewCaseFilesScreenState extends State<ViewCaseFilesScreen> {
             builder: (context) => ImageViewerScreen(imagePath: localFile.path),
           ),
         ).then((_) {
-          // Delete the file when the user navigates back
           if (localFile.existsSync()) {
             localFile.delete();
           }
@@ -123,6 +127,24 @@ class _ViewCaseFilesScreenState extends State<ViewCaseFilesScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error opening file: $e')),
+      );
+    }
+  }
+
+  Future<void> _deleteFile(String documentId, String filePath) async {
+    try {
+      // Delete file from Firestore Storage
+      await _storage.refFromURL(filePath).delete();
+
+      // Delete document from Firestore
+      await _firestore.collection('case_file_upload').doc(documentId).delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('File deleted successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting file: $e')),
       );
     }
   }
