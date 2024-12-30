@@ -89,12 +89,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:legal_log/features/case_add/model/case.dart';
 import 'package:legal_log/features/case_add/services/case_firebase_services.dart';
 import 'package:legal_log/features/case_list/case_details.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get_storage/get_storage.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -129,7 +129,7 @@ class _CalenderScreenState extends State<CalendarScreen> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
-                _fetchCasesForDay(selectedDay);
+                _fetchCasesForDay(selectedDay); // Corrected method name
               },
               onFormatChanged: (format) {
                 setState(() {
@@ -148,13 +148,11 @@ class _CalenderScreenState extends State<CalendarScreen> {
                     itemBuilder: (context, index) {
                       final caseData = _casesForSelectedDay[index];
                       return ListTile(
-                        title: Text("Case No: ${caseData['case_no']}"),
-                        subtitle:
-                            Text("Advocate ID: ${caseData['advocate_id']}"),
+                        title: Text("Case No: ${caseData['case_no'] ?? 'N/A'}"),
+                        subtitle: Text(
+                            "Advocate ID: ${caseData['advocate_id'] ?? 'N/A'}"),
                         onTap: () async {
-                          // Print the case ID when tapped
                           print("Case ID: ${caseData['case_id']}");
-
                           _fetchAndNavigateToCaseDetails(caseData['case_id']);
                         },
                       );
@@ -167,15 +165,15 @@ class _CalenderScreenState extends State<CalendarScreen> {
   }
 
   void _fetchCasesForDay(DateTime selectedDay) async {
-    // Format the selected day to ignore time.
     DateTime startOfDay =
         DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
     DateTime endOfDay = startOfDay.add(const Duration(days: 1));
 
-    // Fetch data from Firestore.
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('case_history')
+          .where('advocate_id',
+              isEqualTo: GetStorage().read('user')['advocate_id'])
           .where('next_date', isGreaterThanOrEqualTo: startOfDay)
           .where('next_date', isLessThan: endOfDay)
           .get();
@@ -183,42 +181,41 @@ class _CalenderScreenState extends State<CalendarScreen> {
       setState(() {
         _casesForSelectedDay = querySnapshot.docs
             .map((doc) => {
-                  "case_no": doc['case_no'],
-                  "advocate_id": doc['advocate_id'],
+                  "case_no": doc['case_no'] ?? 'N/A',
+                  "advocate_id": doc['advocate_id'] ?? 'N/A',
                   "next_date": doc['next_date'],
-                  "case_id": doc['case_id'], // Add the case_id here
-                  "docId": doc.id, // Include the document ID here
+                  "case_id": doc['case_id'],
+                  "docId": doc.id,
                 })
             .toList();
       });
     } catch (e) {
       print("Error fetching cases: $e");
+      // Optionally show an error message to the user
+      Get.snackbar("Error", "Failed to fetch cases. Please try again.");
     }
   }
 
   void _fetchAndNavigateToCaseDetails(String caseId) async {
     try {
-      // Fetch the case document based on the case_id
       DocumentSnapshot caseDoc =
           await FirebaseFirestore.instance.collection('case').doc(caseId).get();
 
       if (caseDoc.exists) {
-        // Convert the Firestore document data into a Case object
         Case caseData = Case.fromJson(caseDoc.data() as Map<String, dynamic>);
         caseData.docId = caseId;
-        // print(caseDoc.data());
 
-        // Pass the Case object to the CaseDetailScreen via navigation
         Get.to(
           () => CaseDetailScreen(),
-          arguments: caseData, // Pass the Case object here
+          arguments: caseData,
         );
       } else {
-        // Handle the case where the document doesn't exist
         print("Case document not found.");
+        Get.snackbar("Error", "Case not found.");
       }
     } catch (e) {
       print("Error fetching case details: $e");
+      Get.snackbar("Error", "Failed to fetch case details. Please try again.");
     }
   }
 }
