@@ -1,0 +1,1 @@
+"Your firebase config here"
